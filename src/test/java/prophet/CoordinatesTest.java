@@ -6,14 +6,14 @@ import java.awt.geom.Point2D;
 
 import org.junit.jupiter.api.Test;
 
-import prophet.model.World;
+import prophet.model.SimpleWorld;
 
 class CoordinatesTest {
 
 	@Test
 	void latlongTest() {
 
-		World w = new World(6378);
+		SimpleWorld w = new SimpleWorld(6378);
 		double x, y;
 		
 		x = y = 0d;

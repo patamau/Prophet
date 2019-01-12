@@ -34,21 +34,19 @@ public class GraphLayer implements ILayer {
 		Point a = new Point(0,100);
 		Point b = new Point(6000, 120);
 		Point c = new Point(6500, 2520);
+		Point d = new Point(5800, -2000);
 		points.add(a);
 		points.add(b);
 		points.add(c);
+		points.add(d);
 		
-		List apoints = new ArrayList<Point>();
+		List<Point> apoints = new ArrayList<Point>();
 		apoints.add(b);
 		pointMap.put(a, apoints);
-		List bpoints = new ArrayList<Point>();
+		List<Point> bpoints = new ArrayList<Point>();
 		bpoints.add(c);
+		bpoints.add(d);
 		pointMap.put(b, bpoints);
-		
-		List testp = pointMap.get(a);
-		if(testp==null) {
-			System.err.println("Fuck");
-		}
 	}
 	
 	private void drawGraph(final Graphics2D g) {

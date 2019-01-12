@@ -15,7 +15,7 @@ import prophet.gui.layers.GraphLayer;
 import prophet.gui.layers.GridLayer;
 import prophet.gui.layers.PictureLayer;
 import prophet.gui.renderers.WorldRendererComponent;
-import prophet.model.World;
+import prophet.model.SimpleWorld;
 
 public class Main {
 	
@@ -35,12 +35,15 @@ public class Main {
 	{
 		final String mapFilename = "/map-full.jpg";
 		final String mapFilename2 = "/map-acquimontana.png";
+		final String mapFilename3 = "/earth.jpg";
 		final BufferedImage mapImage;
 		final BufferedImage mapImage2;
+		final BufferedImage mapImage3;
 		
 		try {
 			mapImage = loadImage(mapFilename);
 			mapImage2 = loadImage(mapFilename2);
+			mapImage3 = loadImage(mapFilename3);
 		} catch(Exception e) {
 			e.printStackTrace();
 			return;
@@ -48,8 +51,9 @@ public class Main {
 		final JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		final World world = new World(6378000d);
+		final SimpleWorld world = new SimpleWorld(6378000d);
 		final WorldRendererComponent globe = new WorldRendererComponent(world);
+		globe.addLayer(new PictureLayer(globe, mapImage3, world.getCirconference()/mapImage3.getWidth(), world.toCartesian(new Point2D.Double(0d, 0d))));
 		globe.addLayer(new PictureLayer(globe, mapImage, 1000d, world.toCartesian(new Point2D.Double(0d, 45d))));
 		globe.addLayer(new PictureLayer(globe, mapImage2, 400d, world.toCartesian(new Point2D.Double(25d, 45d))));
 		globe.addLayer(new GraphLayer(globe));

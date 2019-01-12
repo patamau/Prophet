@@ -21,7 +21,7 @@ import javax.swing.SwingUtilities;
 
 import prophet.gui.ILayer;
 import prophet.gui.IRenderer;
-import prophet.model.World;
+import prophet.model.SimpleWorld;
 
 /**
  * Handles rendering of custom layers in a JPanel.
@@ -46,9 +46,9 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	private double zoom;
 	private Dimension currentSize;
 	private final List<ILayer> layers;
-	private final World world;
+	private final SimpleWorld world;
 	
-	public WorldRendererComponent(final World world)
+	public WorldRendererComponent(final SimpleWorld world)
 	{
 		this.world = world;
 		layers = new ArrayList<ILayer>();
