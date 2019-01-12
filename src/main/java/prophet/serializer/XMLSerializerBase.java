@@ -141,7 +141,6 @@ public abstract class XMLSerializerBase<T> extends SerializerBase<T> {
 						e.printStackTrace();
 					}
 				} else {
-					//look for supported serializer
 					throw new UnsupportedOperationException(setterName);
 				}
 			}
