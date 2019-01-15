@@ -5,18 +5,25 @@ import java.util.Map;
 
 public abstract class SerializerBase<T> implements ISerializer<T> {
 
-	private final Map<Class<?>, ISerializer<?>> serializers;
+	private final static Map<Class<?>, ISerializer<?>> serializers = new HashMap<Class<?>, ISerializer<?>>();
 	
-	protected SerializerBase() {
-		serializers = new HashMap<Class<?>, ISerializer<?>>();
-	}
-	
-	public void addSerializer(ISerializer<?> serializer) {
+	public static void addSerializer(ISerializer<?> serializer) {
 		serializers.put(serializer.getSerializableClass(), serializer);
 	}
 	
-	public ISerializer<?> getSerializer(Class<?> clazz) {
+	public static ISerializer<?> getSerializer(Class<?> clazz) {
 		return serializers.get(clazz);
+	}
+	
+	private final Class<T> serializableClass;
+
+	protected SerializerBase(final Class<T> serializableClass) {
+		this.serializableClass = serializableClass;
+	}
+	
+	@Override
+	public Class<T> getSerializableClass(){
+		return this.serializableClass;
 	}
 	
 }

@@ -15,12 +15,13 @@ class SerializerTest {
 	void test() {
 		final ISetting setting = new SimpleSetting();
 		setting.setName("My Awesome Setting");
+		setting.getWorld().addTown("my awesome town");
 		final ISerializer<ISetting> serializer = new XMLSettingSerializer();
-		String xml = serializer.serialize(setting);
+		String xml = serializer.serialize("setting", setting);
 		System.out.println(xml);
 		final ISetting setting2 = new SimpleSetting();
 		serializer.parse(xml, setting2);
-		xml = serializer.serialize(setting2);
+		xml = serializer.serialize("setting", setting2);
 		System.out.println(xml);
 	}
 

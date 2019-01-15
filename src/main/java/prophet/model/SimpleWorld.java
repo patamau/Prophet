@@ -1,6 +1,8 @@
 package prophet.model;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This simplistic world approach is used to intuitively support flat coordinates system commonly used for visualization.
@@ -14,13 +16,20 @@ public class SimpleWorld implements IWorld {
 	
 	private double radius;
 	private double circonference, circonference2, circonference4;
+	private List<String> towns;
 	
 	public SimpleWorld() {
 		this(WORLD_RADIUS_DEF);
+		this.towns = new ArrayList<String>();
 	}
 	
 	public SimpleWorld(final double radius) {
 		setRadius(radius);
+	}
+	
+	@Override
+	public void addTown(final String name) {
+		towns.add(name);
 	}
 	
 	@Override

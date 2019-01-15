@@ -18,9 +18,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public abstract class XMLSerializerBase<T> extends SerializerBase<T> {
+public class XMLSerializer<T> extends SerializerBase<T> {
+
+	protected XMLSerializer(Class<T> serializableClass) {
+		super(serializableClass);
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * Retrieve all the non static, non volatile, non transient fields of the given class
@@ -50,7 +56,7 @@ public abstract class XMLSerializerBase<T> extends SerializerBase<T> {
 			try {
 				final Object fvalue = f.get(object);
 				//look for supported serializers
-				final ISerializer<? extends Object> fserializer = getSerializer(ftype);
+				final ISerializer<?> fserializer = getSerializer(ftype);
 				if(null == fserializer) {
 					builder.append(' ');
 					builder.append(fname);
@@ -72,9 +78,10 @@ public abstract class XMLSerializerBase<T> extends SerializerBase<T> {
 			try {
 				final Object fvalue = f.get(object);
 				//look for not supported serializers
-				final ISerializer<? extends Object> fserializer = getSerializer(ftype);
+				final ISerializer<?> fserializer = getSerializer(ftype);
 				if(null != fserializer) {
-					builder.append(fserializer.serialize(fvalue));
+					final String fname = f.getName();
+					builder.append(fserializer.serialize(fname, fvalue));
 				}
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
@@ -85,16 +92,15 @@ public abstract class XMLSerializerBase<T> extends SerializerBase<T> {
 	}
 	
 	@Override
-	public String serialize(final Object object) {
+	public String serialize(final String name, final Object object) {
 		final StringBuilder builder = new StringBuilder();
-		final String elementName = object.getClass().getSimpleName();
 		builder.append('<');
-		builder.append(elementName);
+		builder.append(name);
 		serializeAttributes(object, builder);
 		builder.append('>');
 		serializeContent(object, builder);
 		builder.append("</");
-		builder.append(elementName);
+		builder.append(name);
 		builder.append('>');
 		return builder.toString();
 	}
@@ -114,6 +120,37 @@ public abstract class XMLSerializerBase<T> extends SerializerBase<T> {
 		return null;
 	}
 	
+	
+	public void parse(final Element element, final Object object) {
+		NamedNodeMap nodes = element.getAttributes();
+		int nlen = nodes.getLength();
+		for(int i=0; i<nlen; ++i) {
+			Node n = nodes.item(i);
+			final String aname = n.getNodeName();
+			final String avalue = n.getNodeValue();
+			final String setterName = getSetterName(aname);
+			final Method amethod = getSetterMethod(object, setterName);
+			if(null != amethod) {
+				try {
+					amethod.invoke(object, avalue);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			} else {
+				throw new UnsupportedOperationException(setterName);
+			}
+		}
+		NodeList children = element.getChildNodes();
+		nlen = children.getLength();
+		for(int i=0; i<nlen; ++i) {
+			//TODO
+		}
+	}
+	
 	@Override
 	public void parse(final String source, final Object object) {
 		try {
@@ -122,28 +159,7 @@ public abstract class XMLSerializerBase<T> extends SerializerBase<T> {
 			ByteArrayInputStream input = new ByteArrayInputStream(source.getBytes("UTF-8"));
 			Document document = builder.parse(input);
 			Element root = document.getDocumentElement();
-			NamedNodeMap nodes = root.getAttributes();
-			int nlen = nodes.getLength();
-			for(int i=0; i<nlen; ++i) {
-				Node n = nodes.item(i);
-				final String aname = n.getNodeName();
-				final String avalue = n.getNodeValue();
-				final String setterName = getSetterName(aname);
-				final Method amethod = getSetterMethod(object, setterName);
-				if(null != amethod) {
-					try {
-						amethod.invoke(object, avalue);
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
-					}
-				} else {
-					throw new UnsupportedOperationException(setterName);
-				}
-			}
+			parse(root, object);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {

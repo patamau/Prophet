@@ -4,6 +4,8 @@ import java.awt.geom.Point2D;
 
 public interface IWorld {
 
+	public void addTown(final String name);
+	
 	public void setRadius(final double radius);
 	
 	public double getRadius();
