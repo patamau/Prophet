@@ -15,5 +15,5 @@ public interface ISerializer<T> {
 	 * @param source
 	 * @param setting
 	 */
-	public void parse(final String source, final T object);
+	public void parse(final String source, final Object object);
 }

@@ -12,7 +12,16 @@ public abstract class SerializerBase<T> implements ISerializer<T> {
 	}
 	
 	public static ISerializer<?> getSerializer(Class<?> clazz) {
-		return serializers.get(clazz);
+		if(serializers.containsKey(clazz)) {
+			return serializers.get(clazz);
+		} else {
+			for (ISerializer<?> serializer : serializers.values()) {
+				if(serializer.getSerializableClass().isAssignableFrom(clazz)) {
+					return serializer;
+				}
+			}
+		}
+		return null;
 	}
 	
 	private final Class<T> serializableClass;

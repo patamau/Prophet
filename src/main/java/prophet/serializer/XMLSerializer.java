@@ -33,7 +33,7 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 	 * @param c
 	 * @return
 	 */
-	private List<Field> getFields(Class<?> c) {
+	private List<Field> getFields(final Class<?> c) {
 		final List<Field> rf = new ArrayList<Field>();
 		final Field[] fields = c.getDeclaredFields();
 		int fieldsn = fields.length;
@@ -49,7 +49,27 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 		return rf;
 	}
 	
+	private Field getField(final Class<?> c, final String name) {
+		final Field[] fields = c.getDeclaredFields();
+		int fieldsn = fields.length;
+		for (int i = 0; i < fieldsn; ++i) {
+			final Field f = fields[i];
+			if(f.getName().equals(name)
+					&& !Modifier.isStatic(f.getModifiers())
+					&& !Modifier.isVolatile(f.getModifiers())
+					&& !Modifier.isTransient(f.getModifiers())) {
+				f.setAccessible(true);
+				return f;
+			}
+		}
+		return null;
+	}
+	
 	private void serializeAttributes(final Object object, final StringBuilder builder) {
+		builder.append(" class=\"");
+		builder.append(object.getClass().getName());
+		builder.append('"');
+		
 		for (Field f : getFields(object.getClass())) {
 			final String fname = f.getName();
 			final Class<?> ftype = f.getType();
@@ -120,10 +140,9 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 		return null;
 	}
 	
-	
-	public void parse(final Element element, final Object object) {
-		NamedNodeMap nodes = element.getAttributes();
-		int nlen = nodes.getLength();
+	protected void parseAttributes(final Element element, final Object object) {
+		final NamedNodeMap nodes = element.getAttributes();
+		final int nlen = nodes.getLength();
 		for(int i=0; i<nlen; ++i) {
 			Node n = nodes.item(i);
 			final String aname = n.getNodeName();
@@ -131,8 +150,16 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 			final String setterName = getSetterName(aname);
 			final Method amethod = getSetterMethod(object, setterName);
 			if(null != amethod) {
+				final Class<?>[] atypes = amethod.getParameterTypes();
+				final Class<?> atype = atypes[0];
 				try {
-					amethod.invoke(object, avalue);
+					if(atype.isAssignableFrom(String.class)) {
+						amethod.invoke(object, avalue);
+					} else if(atype.isAssignableFrom(double.class)) {
+						amethod.invoke(object, Double.valueOf(avalue));
+					} else { 
+						throw new IllegalArgumentException("No such supported type "+atype);
+					}
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
 				} catch (IllegalArgumentException e) {
@@ -140,15 +167,49 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 				}
-			} else {
-				throw new UnsupportedOperationException(setterName);
 			}
 		}
-		NodeList children = element.getChildNodes();
-		nlen = children.getLength();
+	}
+
+	protected void parseChildren(final Element element, final Object object) {
+		final NodeList children = element.getChildNodes();
+		final int nlen = children.getLength();
 		for(int i=0; i<nlen; ++i) {
-			//TODO
+			try {
+				Node n = children.item(i);
+				Node classAttribute = n.getAttributes().getNamedItem("class");
+				if(null == classAttribute) {
+					throw new UnsupportedOperationException("Cannot find class attribute for element "+n.getNodeName());
+				}
+				final String classValue = classAttribute.getNodeValue();
+				final String cname = n.getNodeName();
+				final Field cfield = getField(object.getClass(), cname);
+				Class<?> classType = Class.forName(classValue);
+				Object cobject = classType.newInstance();
+				ISerializer<?> classSerializer = getSerializer(classType);
+				if(null != classSerializer) {
+					if(classSerializer instanceof XMLSerializer<?>) {
+						((XMLSerializer<?>)classSerializer).parse((Element)n, cobject);
+						cfield.set(object, cobject);
+					} else {
+						throw new UnsupportedOperationException("Invalid serializer type "+classSerializer.getClass().getName()+" instead of "+this.getClass().getName());
+					}
+				} else {
+					throw new UnsupportedOperationException("No such serializer for "+classType);
+				}
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} 
 		}
+	}
+
+	protected void parse(final Element element, final Object object) {
+		parseAttributes(element, object);
+		parseChildren(element, object);
 	}
 	
 	@Override

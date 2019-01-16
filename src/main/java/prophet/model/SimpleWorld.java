@@ -16,11 +16,11 @@ public class SimpleWorld implements IWorld {
 	
 	private double radius;
 	private double circonference, circonference2, circonference4;
-	private List<String> towns;
+	private List<ITown> towns;
 	
 	public SimpleWorld() {
 		this(WORLD_RADIUS_DEF);
-		this.towns = new ArrayList<String>();
+		this.towns = new ArrayList<ITown>();
 	}
 	
 	public SimpleWorld(final double radius) {
@@ -28,8 +28,8 @@ public class SimpleWorld implements IWorld {
 	}
 	
 	@Override
-	public void addTown(final String name) {
-		towns.add(name);
+	public void addTown(final ITown town) {
+		towns.add(town);
 	}
 	
 	@Override
