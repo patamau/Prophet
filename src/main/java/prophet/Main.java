@@ -1,8 +1,5 @@
 package prophet;
 
-
-import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,10 +8,12 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
+import prophet.gui.ProphetGUI;
 import prophet.gui.layers.GraphLayer;
 import prophet.gui.layers.GridLayer;
-import prophet.gui.layers.PictureLayer;
-import prophet.gui.renderers.WorldRendererComponent;
+import prophet.model.IMap;
+import prophet.model.IWorld;
+import prophet.model.SimpleMap;
 import prophet.model.SimpleWorld;
 
 public class Main {
@@ -33,34 +32,19 @@ public class Main {
 
 	public static void main(String args[])
 	{
-		final String mapFilename = "/map-full.jpg";
-		final String mapFilename2 = "/map-acquimontana.png";
-		final String mapFilename3 = "/earth.jpg";
-		final BufferedImage mapImage;
-		final BufferedImage mapImage2;
-		final BufferedImage mapImage3;
-		
-		try {
-			mapImage = loadImage(mapFilename);
-			mapImage2 = loadImage(mapFilename2);
-			mapImage3 = loadImage(mapFilename3);
-		} catch(Exception e) {
-			e.printStackTrace();
-			return;
-		}
-		final JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		final Prophet prophet = new Prophet();
 
-		final SimpleWorld world = new SimpleWorld(6378000d);
-		final WorldRendererComponent globe = new WorldRendererComponent(world);
-		globe.addLayer(new PictureLayer(globe, mapImage3, world.getCirconference()/mapImage3.getWidth(), world.toCartesian(new Point2D.Double(0d, 0d))));
-		globe.addLayer(new PictureLayer(globe, mapImage, 1000d, world.toCartesian(new Point2D.Double(0d, 45d))));
-		globe.addLayer(new PictureLayer(globe, mapImage2, 400d, world.toCartesian(new Point2D.Double(25d, 45d))));
-		globe.addLayer(new GraphLayer(globe));
-		globe.addLayer(new GridLayer(globe));
-		frame.add(globe);
-		frame.setSize(400, 300);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
+		//temporary shit
+		final IWorld world = prophet.getSetting().getWorld();
+		final IMap map = new SimpleMap();
+		map.setPicturePath("/earth.jpg");
+		map.setScale(world.getCirconference()/map.getPicture().getWidth());
+		prophet.getSetting().getWorld().addMap(map);
+		prophet.getRenderer().addLayer(new GraphLayer(prophet.getRenderer()));
+		prophet.getRenderer().addLayer(new GridLayer(prophet.getRenderer()));
+		//----
+		
+		final ProphetGUI gui = new ProphetGUI(prophet);
+		gui.show();
 	}
 }

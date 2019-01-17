@@ -1,10 +1,23 @@
 package prophet.model;
 
 import java.awt.geom.Point2D;
+import java.util.List;
 
 public interface IWorld {
 
+	public void addWorldListener(final IWorldListener listener);
+	public void removeWorldListener(final IWorldListener listener);
+	public void clearWorldListeners();
+	
 	public void addTown(final ITown town);
+	public void removeTown(final ITown town);
+	public void getTowns(final List<ITown> towns);
+	public void clearTowns();
+	
+	public void addMap(final IMap map);
+	public void removeMap(final IMap map);
+	public void getMaps(final List<IMap> maps);
+	public void clearMaps();
 	
 	public void setRadius(final double radius);
 	

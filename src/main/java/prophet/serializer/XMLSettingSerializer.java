@@ -1,5 +1,6 @@
 package prophet.serializer;
 
+import prophet.model.IMap;
 import prophet.model.ISetting;
 import prophet.model.ITown;
 import prophet.model.IWorld;
@@ -10,6 +11,7 @@ public class XMLSettingSerializer extends XMLSerializer<ISetting> {
 		super(ISetting.class);
 		addSerializer(new XMLSerializer<IWorld>(IWorld.class));
 		addSerializer(new XMLSerializer<ITown>(ITown.class));
+		addSerializer(new XMLSerializer<IMap>(IMap.class));
 		addSerializer(new XMLListSerializer());
 	}
 	

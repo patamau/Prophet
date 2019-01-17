@@ -12,7 +12,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +20,7 @@ import javax.swing.SwingUtilities;
 
 import prophet.gui.ILayer;
 import prophet.gui.IRenderer;
-import prophet.model.SimpleWorld;
+import prophet.model.IWorld;
 
 /**
  * Handles rendering of custom layers in a JPanel.
@@ -46,9 +45,9 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	private double zoom;
 	private Dimension currentSize;
 	private final List<ILayer> layers;
-	private final SimpleWorld world;
+	private final IWorld world;
 	
-	public WorldRendererComponent(final SimpleWorld world)
+	public WorldRendererComponent(final IWorld world)
 	{
 		this.world = world;
 		layers = new ArrayList<ILayer>();

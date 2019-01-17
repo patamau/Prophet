@@ -13,7 +13,7 @@ class CoordinatesTest {
 	@Test
 	void latlongTest() {
 
-		SimpleWorld w = new SimpleWorld(6378);
+		SimpleWorld w = new SimpleWorld();
 		double x, y;
 		
 		x = y = 0d;

@@ -75,6 +75,9 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 			final Class<?> ftype = f.getType();
 			try {
 				final Object fvalue = f.get(object);
+				if(null == fvalue) {
+					throw new IllegalArgumentException("Object "+object+" "+fname+" value is null");
+				}
 				//look for supported serializers
 				final ISerializer<?> fserializer = getSerializer(ftype);
 				if(null == fserializer) {
