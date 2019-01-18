@@ -33,7 +33,11 @@ class SerializerTest {
 		String xml = serializer.serialize("setting", setting);
 		System.out.println(xml);
 		final ISetting setting2 = new SimpleSetting();
-		serializer.parse(xml, setting2);
+		try {
+			serializer.parse(xml, setting2);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		xml = serializer.serialize("setting", setting2);
 		System.out.println(xml);
 	}

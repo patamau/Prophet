@@ -16,6 +16,15 @@ public class SimpleSetting implements ISetting {
 		this.world = new SimpleWorld();
 	}
 	
+	public void reset() {
+		this.name = SETTING_NAME_DEF;
+		this.world.reset();
+	}
+	
+	public void update() {
+		this.world.update();
+	}
+	
 	@Override
 	public void setName(String name) {
 		this.name = name;

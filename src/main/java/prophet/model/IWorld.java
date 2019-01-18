@@ -5,6 +5,9 @@ import java.util.List;
 
 public interface IWorld {
 
+	public void reset();
+	public void update();
+	
 	public void addWorldListener(final IWorldListener listener);
 	public void removeWorldListener(final IWorldListener listener);
 	public void clearWorldListeners();

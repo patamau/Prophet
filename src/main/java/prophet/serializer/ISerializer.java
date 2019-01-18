@@ -14,6 +14,7 @@ public interface ISerializer<T> {
 	 * Fill the given object with data from the serialized source 
 	 * @param source
 	 * @param setting
+	 * @throws Exception 
 	 */
-	public void parse(final String source, final Object object);
+	public void parse(final String source, final Object object) throws Exception;
 }

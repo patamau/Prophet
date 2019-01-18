@@ -1,6 +1,5 @@
 package prophet.serializer;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +61,6 @@ public class XMLListSerializer extends XMLSerializer<List> {
 			try {
 				Node n = children.item(i);
 				String classValue = n.getNodeName();
-				final String cname = n.getNodeName();
 				Class<?> classType = Class.forName(classValue);
 				Object cobject = classType.newInstance();
 				ISerializer<?> classSerializer = getSerializer(classType);

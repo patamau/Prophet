@@ -1,8 +1,6 @@
 package prophet.serializer;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,14 +10,12 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 public class XMLSerializer<T> extends SerializerBase<T> {
 
@@ -187,13 +183,19 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 				final String classValue = classAttribute.getNodeValue();
 				final String cname = n.getNodeName();
 				final Field cfield = getField(object.getClass(), cname);
-				Class<?> classType = Class.forName(classValue);
-				Object cobject = classType.newInstance();
+				final Class<?> classType = Class.forName(classValue);
+				Object cobject = cfield.get(object);
+				if(null == cobject) {
+					System.out.println("Hey, creating new object "+cname);
+					cobject = classType.newInstance();
+				} else {
+					System.out.println("Yes, reusing object "+cobject);
+				}
 				ISerializer<?> classSerializer = getSerializer(classType);
 				if(null != classSerializer) {
 					if(classSerializer instanceof XMLSerializer<?>) {
 						((XMLSerializer<?>)classSerializer).parse((Element)n, cobject);
-						cfield.set(object, cobject);
+						//cfield.set(object, cobject);
 					} else {
 						throw new UnsupportedOperationException("Invalid serializer type "+classSerializer.getClass().getName()+" instead of "+this.getClass().getName());
 					}
@@ -216,22 +218,12 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 	}
 	
 	@Override
-	public void parse(final String source, final Object object) {
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			ByteArrayInputStream input = new ByteArrayInputStream(source.getBytes("UTF-8"));
-			Document document = builder.parse(input);
-			Element root = document.getDocumentElement();
-			parse(root, object);
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void parse(final String source, final Object object) throws Exception {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		ByteArrayInputStream input = new ByteArrayInputStream(source.getBytes("UTF-8"));
+		Document document = builder.parse(input);
+		Element root = document.getDocumentElement();
+		parse(root, object);
 	}
 }

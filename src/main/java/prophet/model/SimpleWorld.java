@@ -30,6 +30,27 @@ public class SimpleWorld implements IWorld {
 	}
 	
 	@Override
+	public void reset() {
+		this.towns.clear();
+		this.maps.clear();
+		//do not remove the listeners, we want to keep them, just reset the data
+		fireTownsCleared();
+		fireMapsCleared();
+	}
+	
+	@Override
+	public void update() {
+		//notify the listeners of towns
+		for (ITown t: towns) {
+			fireTownAdded(t);
+		}
+		//notify the listeners of maps
+		for (IMap m: maps) {
+			fireMapAdded(m);
+		}
+	}
+	
+	@Override
 	public void addWorldListener(final IWorldListener listener) {
 		synchronized(listeners) {
 			listeners.add(listener);
@@ -62,6 +83,14 @@ public class SimpleWorld implements IWorld {
 		synchronized (listeners) {
 			for(IWorldListener l : listeners) {
 				l.onTownRemoved(town);
+			}
+		}
+	}
+	
+	private void fireTownsCleared() {
+		synchronized (listeners) {
+			for(IWorldListener l : listeners) {
+				l.onTownsCleared();;
 			}
 		}
 	}
@@ -138,6 +167,14 @@ public class SimpleWorld implements IWorld {
 		synchronized (listeners) {
 			for(IWorldListener l : listeners) {
 				l.onMapRemoved(map);
+			}
+		}
+	}
+	
+	private void fireMapsCleared() {
+		synchronized (listeners) {
+			for(IWorldListener l : listeners) {
+				l.onMapsCleared();;
 			}
 		}
 	}
