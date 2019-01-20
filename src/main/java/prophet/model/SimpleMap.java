@@ -9,6 +9,7 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 import prophet.Main;
+import prophet.util.Resources;
 
 public class SimpleMap implements IMap{
 	
@@ -37,9 +38,12 @@ public class SimpleMap implements IMap{
 	@Override
 	public void setPicturePath(final String path) {
 		this.picturePath = path;
+		picture = Resources.getImage(path);
+		/*
 		final File f = new File(path);
 		final URL url;
 		if (!f.exists()) {
+			System.out.println("no such file "+path);
 			url = Main.class.getResource(path);
 		} else {
 			try {
@@ -53,10 +57,12 @@ public class SimpleMap implements IMap{
 		}
 		try {
 			picture = ImageIO.read(url);
-		} catch (IOException e) {
+		} catch (Exception e) {
+			System.out.println("bad url "+url+": file "+f+" path "+path);
 			picture = null;
 			e.printStackTrace();
 		}
+		*/
 		updateSize();
 	}
 	

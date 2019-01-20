@@ -1,5 +1,6 @@
 package prophet.gui;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -16,6 +17,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
@@ -38,9 +40,7 @@ public class ProphetGUI implements ActionListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	private void createAndShowGUI() {
-		frame.add(prophet.getRenderer());
-		
+	private void createMenubar() {
 		//create menu bar
 		final JMenuBar menubar = new JMenuBar();
 		final JMenu fileMenu = new JMenu("File");		
@@ -58,8 +58,37 @@ public class ProphetGUI implements ActionListener {
 		fileMenu.add(exitItem);
 		menubar.add(fileMenu);
 		frame.setJMenuBar(menubar);
+	}
+	
+	private void createLeftPanel() {
+		JPanel leftPanel = new JPanel();
+		frame.add(leftPanel, BorderLayout.WEST);
+	}
+	
+	private void createCentralPanel() {
+		frame.add(prophet.getRenderer());
+	}
+	
+	private void createRightPanel() {
+		JPanel rightPanel = new JPanel();
+		frame.add(rightPanel, BorderLayout.EAST);
+	}
+	
+	private void createBottomPanel() {
+		JPanel bottomPanel = new JPanel();
+		frame.add(bottomPanel, BorderLayout.SOUTH);
+	}
+	
+	private void createAndShowGUI() {
+		frame.setLayout(new BorderLayout());
 		
-		frame.setSize(400, 300);
+		createMenubar();
+		createLeftPanel();
+		createCentralPanel();
+		createRightPanel();
+		createBottomPanel();
+		
+		frame.setSize(800, 500); //TODO: load configuration
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
@@ -74,7 +103,7 @@ public class ProphetGUI implements ActionListener {
 	
 	private void loadSetting() {
 		final JFileChooser fc = new JFileChooser();
-		final File lastFile = new File("/");
+		final File lastFile = new File(System.getProperty("user.dir"));
 		fc.setSelectedFile(lastFile);
 		fc.setCurrentDirectory(lastFile.getParentFile());
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -100,7 +129,7 @@ public class ProphetGUI implements ActionListener {
 	
 	private void saveSetting() {
 		final JFileChooser fc = new JFileChooser();
-		final File lastFile = new File("/");
+		final File lastFile = new File(System.getProperty("user.dir"));
 		fc.setSelectedFile(lastFile);
 		fc.setCurrentDirectory(lastFile.getParentFile());
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);

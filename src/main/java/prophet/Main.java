@@ -8,7 +8,6 @@ import java.io.PrintStream;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 
 import prophet.gui.ProphetGUI;
 import prophet.gui.layers.GraphLayer;
@@ -16,9 +15,35 @@ import prophet.gui.layers.GridLayer;
 import prophet.model.IMap;
 import prophet.model.IWorld;
 import prophet.model.SimpleMap;
+import prophet.util.Configuration;
 import prophet.util.Logger;
+import prophet.util.Options;
 
 public class Main {
+	
+	private static final Logger logger = Logger.getLogger(Main.class);
+	
+	public static final String 
+			OPTKEY_LOGFILENAME = "logfile", 
+			OPTKEY_LOGLEVEL = "loglevel",
+			OPT_DEBUG = "debug";
+	
+	public static final String
+			CFG_FILENAME = "prophet.cfg";
+	
+	private static void printSystemProperty(String key){
+		logger.debug(key+" "+System.getProperty(key));
+	}
+	
+	private static void printSystemProperties(){
+		printSystemProperty("os.name");
+		printSystemProperty("os.version");
+		printSystemProperty("os.arch");
+		printSystemProperty("java.version");
+		printSystemProperty("java.vendor");
+		printSystemProperty("java.class.path");
+		printSystemProperty("java.library.path");
+	}
 	
 	private static BufferedImage loadImage(String resource) throws IOException
 	{
@@ -34,20 +59,46 @@ public class Main {
 
 	public static void main(String args[])
 	{
-		PrintStream logStream;
-		try {
-			logStream = new PrintStream(Prophet.class.getSimpleName().toLowerCase()+".log");
-			Logger.addStream(logStream);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return;
+		//parse arguments
+		final Options opts = new Options(args);
+		//configure logging
+		if(opts.isSet(OPT_DEBUG)) {
+			//verbose console for debugging
+			Logger.addStream(System.out);
+		} else {
+			final String logfilename = opts.getOption(Main.OPTKEY_LOGFILENAME, Prophet.class.getSimpleName().toLowerCase()+".log");
+			final PrintStream logStream;
+			try {
+				logStream = new PrintStream(logfilename);
+				Logger.addStream(logStream);
+			} catch (FileNotFoundException e) {
+				System.err.println("Unfortunately it was not possible to configure logging to "+logfilename);
+				e.printStackTrace();
+				//we can keep on going with console only (-_-)
+				Logger.addStream(System.out);
+			}
 		}
+		//print all the stuff we might want to check when looking for errors on user systems
+		printSystemProperties();
+		//force log level
+		final int loglevel = Logger.toLevel(opts.getOption(Main.OPTKEY_LOGLEVEL, Logger.Levels[opts.isSet(OPT_DEBUG) ? Logger.L_DEBUG : Logger.L_INFO]));
+		Logger.setLevel(loglevel);
+		//load configuration
+		Configuration.getGlobalConfiguration().load(CFG_FILENAME);
+		
 		final Prophet prophet = new Prophet();
+		Thread.setDefaultUncaughtExceptionHandler(prophet);
+		Runtime.getRuntime().addShutdownHook(new Thread(){
+			public void run(){
+				logger.debug("Shutdown hook called...");
+				prophet.finalize();
+			}
+		});
 
-		//temporary shit
+		//temporary shit ----
 		final IWorld world = prophet.getSetting().getWorld();
 		final IMap map = new SimpleMap();
-		map.setPicturePath("/earth.jpg");
+		map.setPicturePath("maps/earth.jpg");
 		map.setScale(world.getCirconference()/map.getPicture().getWidth());
 		prophet.getSetting().getWorld().addMap(map);
 
@@ -57,7 +108,7 @@ public class Main {
 		//prophet.getSetting().getWorld().addMap(map2);
 		prophet.getRenderer().addLayer(new GraphLayer(prophet.getRenderer()));
 		prophet.getRenderer().addLayer(new GridLayer(prophet.getRenderer()));
-		//----
+		//---  ----
 		
 		final ProphetGUI gui = new ProphetGUI(prophet);
 		gui.show();

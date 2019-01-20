@@ -1,6 +1,7 @@
 package prophet;
 
 import java.awt.geom.Point2D;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,9 +17,14 @@ import prophet.serializer.ISerializer;
 import prophet.serializer.XMLSettingSerializer;
 import prophet.util.Logger;
 
-public class Prophet implements IWorldListener {
+public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	
 	private static final Logger logger = Logger.getLogger(Prophet.class);
+	
+	public static final String 
+		VERSION = "0.1a",
+		BUILD = Prophet.class.getPackage().getImplementationVersion(),
+		AUTHOR = Prophet.class.getPackage().getImplementationVendor();
 
 	private final ISetting setting;
 	private final WorldRendererComponent renderer;
@@ -60,13 +66,16 @@ public class Prophet implements IWorldListener {
 	@Override
 	public void onMapRemoved(IMap map) {
 		logger.info("Map removed: ",map.getPicturePath());
-		mapLayers.remove(map);
+		renderer.removeLayer(mapLayers.remove(map));
 		logger.info("Maps are now "+mapLayers.size());
 	}
 	
 	@Override
 	public void onMapsCleared() {
 		logger.info("Maps cleared");
+		for(ILayer l : mapLayers.values()) {
+			renderer.removeLayer(l);
+		}
 		mapLayers.clear();
 	}
 
@@ -86,5 +95,16 @@ public class Prophet implements IWorldListener {
 	public void onTownsCleared() {
 		logger.info("Towns cleared");
 		// TODO
+	}
+
+	@Override
+	public void uncaughtException(Thread t, Throwable e) {
+		logger.error(e.getMessage());
+		e.printStackTrace();
+	}
+	
+	public void finalize() {
+		//TODO: save everything's needed to be saved and close streams properly
+		Logger.clearStreams();
 	}
 }

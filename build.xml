@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<project name="project" default="default">
+	<target name="compile">
+		<mkdir dir="bin" />
+		<javac destdir="bin">
+			<include name="**/*.java" />
+			<src path="src/main/java" />
+			<!-- for additional libraries -->
+			<!--
+			<classpath>
+				<fileset dir="lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			-->
+		</javac>
+		<copy todir="bin/">
+			<fileset dir="src/main/resources" includes="**/*.*" />
+		</copy>
+	</target>
+
+	<target name="jar">
+		<mkdir dir="build" />
+		<delete file="build/lib/prophet.jar"/>
+		<buildnumber file="build.num"/>
+		<tstamp>
+			<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+		</tstamp>
+
+		<manifest file="MANIFEST.MF">
+			<attribute name="Built-By" value="Urchins"/>
+			<attribute name="Main-Class" value="prophet.Main"/>
+			<attribute name="Implementation-Title" value="Prophet"/>
+			<attribute name="Implementation-Version" value="${build.number}"/>
+			<attribute name="Implementation-Vendor" value="Urchins"/>
+			<attribute name="Built-Date" value="${TODAY}"/>
+		</manifest>
+
+		<jar destfile="build/lib/prophet.jar"
+           basedir="bin"
+           manifest="MANIFEST.MF">
+			<include name="**/*.class" />
+			<include name="**/*.png" />
+		</jar>
+	</target>
+	
+	<target name="resources">
+		<mkdir dir="build" />
+		<copy todir="build">
+			<fileset dir="src/main/resources" includes="*.exe" />
+			<fileset dir="src/main/resources" includes="*.dll" />
+		</copy>
+		<!-- for additional libraries -->
+		<!--
+		<copy todir="build/lib">
+			<fileset dir="lib" includes="**/*.jar" />
+		</copy>
+		-->
+		<copy todir="build/lang">
+			<fileset dir="lang" includes="**/*.lang" />
+		</copy>
+	</target>
+	
+	<target name="build" depends="compile, jar, resources" />
+	
+	<target name="release" depends="clean, build">
+		<mkdir dir="releases" />
+		<zip destfile="releases/Prophet_${build.number}.zip">
+			<fileset dir="build" />
+		</zip>
+	</target>
+
+	<target name="clean">
+		<delete dir="build" />
+		<delete dir="bin" />
+		<delete>
+			<fileset file="prophet.jar"/>
+			<fileset file="MANIFEST.MF"/>
+		</delete>
+	</target>
+
+	<target name="default" depends="release" />
+</project>

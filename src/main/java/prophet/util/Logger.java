@@ -16,22 +16,30 @@ public class Logger {
 		L_WARN = 2, //an application problem (could be solved)
 		L_ERROR = 3; //an application error
 	
-	private static final String[] _levels = new String[]{
+	public static final String[] Levels = new String[]{
 		"DEBUG",
 		"INFO ",
 		"WARN ",
 		"ERROR"
 	};
+	
+	/**
+	 * Retrieve the level code from a given level string
+	 * @param levelString the input string to be matched
+	 * @return the level string index or DEBUG if no such level exists
+	 */
+	public static final int toLevel(final String levelString) {
+		for(int i=0; i<Levels.length; ++i) {
+			if(Levels[i].equalsIgnoreCase(levelString)) return i;
+		}
+		return 0;
+	}
 
 	private final static Map<String, Logger> loggers = new HashMap<String,Logger>();
 	private final static StringBuilder sbuild = new StringBuilder();
 	private static int LEVEL = L_DEBUG;
 	private final static List<PrintStream> streams = new LinkedList<PrintStream>();
 	private final static RuntimeMXBean runtimeMan = ManagementFactory.getRuntimeMXBean();
-	
-	static{
-		streams.add(System.out);
-	}
 	
 	private final String name;
 	
@@ -51,12 +59,16 @@ public class Logger {
 	
 	public static void removeStream(final PrintStream output){
 		synchronized(streams) {
+			output.close();
 			streams.remove(output);
 		}
 	}
 	
 	public static void clearStreams(){
 		synchronized(streams) {
+			for(PrintStream s: streams) {
+				s.close();
+			}
 			streams.clear();
 		}
 	}
@@ -85,7 +97,7 @@ public class Logger {
 	private void prepareLogEntry(final int level) {
 		sbuild.setLength(0);
 		sbuild.append('[');
-		sbuild.append(_levels[level]);
+		sbuild.append(Levels[level]);
 		sbuild.append("]@");
 		sbuild.append(runtimeMan.getUptime());
 		sbuild.append(' ');
