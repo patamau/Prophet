@@ -3,7 +3,11 @@ package prophet.gui;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
+import prophet.gui.renderers.IRendererListener;
+
 public interface IRenderer {
+	
+	public void addListener(final IRendererListener listener);
 
 	public void addLayer(final ILayer layer);
 	public void removeLayer(final ILayer layer);

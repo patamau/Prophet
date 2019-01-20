@@ -11,6 +11,8 @@ import javax.swing.ImageIcon;
 
 public class Resources {
 	
+	private static final Logger logger = Logger.getLogger(Resources.class);
+	
 	public static String PIX_PATH = "pix";
 	
 	private static HashMap<String, ImageIcon> cache = new HashMap<String, ImageIcon>();
@@ -23,8 +25,7 @@ public class Resources {
 				i = new ImageIcon(ImageIO.read(ClassLoader.getSystemClassLoader().getResourceAsStream(url)));
 				cache.put(name, i);
 			} catch (Exception e) {
-				System.err.println("Cannot locate "+name+" at "+url);
-				e.printStackTrace();
+				logger.error("Cannot locate icon "+name+" at "+url);
 			}
 		}
 		return i;
@@ -35,8 +36,7 @@ public class Resources {
 		try {
 			i = ImageIO.read(ClassLoader.getSystemClassLoader().getResourceAsStream(url));
 		} catch (Exception e) {
-			System.err.println("Cannot locate "+url);
-			e.printStackTrace();
+			logger.error("cannot load image from ",url);
 		}
 		return i;
 	}

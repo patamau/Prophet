@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -22,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import prophet.Prophet;
@@ -99,8 +101,11 @@ public class ProphetGUI implements ActionListener {
 	}
 	
 	private void createBottomPanel() {
-		JPanel bottomPanel = new JPanel();
-		bottomPanel.setPreferredSize(new Dimension(0, BOTTOMPANEL_SIZE_PREF));
+		final JPanel bottomPanel = new JPanel(new BorderLayout());
+		
+		final JToolBar positionWidget = new PositionWidget(prophet.getRenderer(), prophet.getSetting().getWorld());
+		bottomPanel.add(positionWidget, BorderLayout.EAST);
+		
 		frame.add(bottomPanel, BorderLayout.SOUTH);
 	}
 	

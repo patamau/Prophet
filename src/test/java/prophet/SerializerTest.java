@@ -1,7 +1,6 @@
 package prophet;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import prophet.model.IMap;
@@ -12,8 +11,15 @@ import prophet.model.SimpleSetting;
 import prophet.model.SimpleTown;
 import prophet.serializer.ISerializer;
 import prophet.serializer.XMLSettingSerializer;
+import prophet.util.Logger;
 
 class SerializerTest {
+	
+	@BeforeAll
+    public static void setUp() {
+        Logger.setLevel(Logger.L_DEBUG);
+        Logger.addStream(System.out);
+    }
 
 	@Test
 	void test() {
@@ -27,7 +33,7 @@ class SerializerTest {
 		town2.setName("another awesome town");
 		setting.getWorld().addTown(town2);
 		final IMap map = new SimpleMap();
-		map.setPicturePath("/earth.jpg");
+		map.setPicturePath("maps/earth.jpg");
 		setting.getWorld().addMap(map);
 		final ISerializer<ISetting> serializer = new XMLSettingSerializer();
 		String xml = serializer.serialize("setting", setting);

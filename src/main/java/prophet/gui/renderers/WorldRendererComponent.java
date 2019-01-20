@@ -13,7 +13,9 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -29,13 +31,9 @@ import prophet.model.IWorld;
  * 
  * @author patamau
  */
+@SuppressWarnings("serial")
 public class WorldRendererComponent extends JComponent implements IRenderer,
 	MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4335548722862777114L;
 	
 	public static final double ZOOM_MAX = 1000.0d, ZOOM_MIN = 0.00001d;
 	
@@ -45,12 +43,14 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	private double zoom;
 	private Dimension currentSize;
 	private final List<ILayer> layers;
+	private final Set<IRendererListener> listeners;
 	private final IWorld world;
 	
 	public WorldRendererComponent(final IWorld world)
 	{
 		this.world = world;
 		layers = new ArrayList<ILayer>();
+		listeners = new HashSet<IRendererListener>();
 		normalCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
 		dragCursor = new Cursor(Cursor.HAND_CURSOR);
 		mousePressedPos = new Point(-1,-1);
@@ -79,6 +79,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		offset.y += zdy/zoom;
 		zoom = _z;
 	    repaint();
+	    fireZoomChanged(zoom);
 	}
 	
 	@Override
@@ -124,8 +125,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		g2.dispose();
 	}
 	
-	public void drawLayers(final Graphics2D g)
-	{
+	public void drawLayers(final Graphics2D g) {
 		synchronized(layers) {
 			//draw all layers
 			for(final ILayer layer : layers) {
@@ -134,24 +134,43 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		}
 	}
 	
-	public void addLayer(final ILayer layer)
-	{
+	public void addLayer(final ILayer layer) {
 		synchronized (layers) {
 			layers.add(layer);
 		}
 	}
 	
-	public void removeLayer(final ILayer layer)
-	{
+	public void removeLayer(final ILayer layer) {
 		synchronized (layers) {
 			layers.remove(layer);
 		}
 	}
 	
-	public void clearLayers()
-	{
+	public void clearLayers() {
 		synchronized (layers) {
 			layers.clear();
+		}
+	}
+	
+	public void addListener(final IRendererListener listener) {
+		synchronized(listeners) {
+			listeners.add(listener);
+		}
+	}
+	
+	private void fireCursorMoved(final Point point) {
+		synchronized (listeners) {
+			for(IRendererListener l: listeners) {
+				l.onMouseMoved(point);
+			}
+		}
+	}
+	
+	private void fireZoomChanged(final double zoom) {
+		synchronized (listeners) {
+			for(IRendererListener l: listeners) {
+				l.onZoomChanged(zoom);
+			}
 		}
 	}
 	
@@ -188,7 +207,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		double wy = getWorldY(e.getPoint().y);
 		double lon = world.toLongitude(wx);
 		double lat = world.toLatitude(wy);
-		System.out.println("polar: "+lat+","+lon);
+		fireCursorMoved(e.getPoint());
 	}
 
 	@Override

@@ -17,11 +17,14 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import prophet.util.Logger;
+
 public class XMLSerializer<T> extends SerializerBase<T> {
 
+	private static final Logger logger = Logger.getLogger(XMLSerializer.class);
+	
 	protected XMLSerializer(Class<T> serializableClass) {
 		super(serializableClass);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -186,10 +189,10 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 				final Class<?> classType = Class.forName(classValue);
 				Object cobject = cfield.get(object);
 				if(null == cobject) {
-					System.out.println("Hey, creating new object "+cname);
+					logger.warning("creating new object ",cname," (",classType.getName(),")");
 					cobject = classType.newInstance();
 				} else {
-					System.out.println("Yes, reusing object "+cobject);
+					logger.debug("Reusing preallocated object ",cobject, " (", cname, " ", cobject.getClass().getName(),")");
 				}
 				ISerializer<?> classSerializer = getSerializer(classType);
 				if(null != classSerializer) {
