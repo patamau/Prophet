@@ -31,7 +31,6 @@ public class ConfigurationDialog implements
 		COL_KEY = "Key",
 		VAL_KEY = "Value",
 		DIALOG_TITLE = "Configuration",
-		ACCEPT_LBL = "Accept",
 		CANCEL_LBL = "Cancel",
 		RESET_LBL = "Reset",
 		REMOVE_LBL = "Remove",
@@ -39,8 +38,7 @@ public class ConfigurationDialog implements
 	
 	//GUI components
 	private JDialog dialog;
-	private JButton acceptButton, 
-		cancelButton, 
+	private JButton cancelButton, 
 		resetButton,
 		removeButton,
 		saveButton;
@@ -90,22 +88,22 @@ public class ConfigurationDialog implements
 		gc.gridy=0;
 		gc.insets = new Insets(5,5,5,5);
 		saveButton = new JButton(Language.string(SAVE_LBL));
+		saveButton.setToolTipText(Language.string("Apply and save the configuration to file"));
 		saveButton.addActionListener(this);
 		panel.add(saveButton,gc);
 		gc.gridx++;
-		acceptButton = new JButton(Language.string(ACCEPT_LBL));
-		acceptButton.addActionListener(this);
-		panel.add(acceptButton,gc);
-		gc.gridx++;
 		resetButton = new JButton(Language.string(RESET_LBL));
+		resetButton.setToolTipText(Language.string("Reset entries to their original value"));
 		resetButton.addActionListener(this);
 		panel.add(resetButton,gc);
 		gc.gridx++;
 		removeButton = new JButton(Language.string(REMOVE_LBL));
+		resetButton.setToolTipText(Language.string("Remove the currently selected entry"));
 		removeButton.addActionListener(this);
 		panel.add(removeButton,gc);
 		gc.gridx++;
 		cancelButton = new JButton(Language.string(CANCEL_LBL));
+		resetButton.setToolTipText(Language.string("Discard changes and exit"));
 		cancelButton.addActionListener(this);
 		panel.add(cancelButton,gc);
 		return panel;
@@ -183,18 +181,20 @@ public class ConfigurationDialog implements
 
 	public void actionPerformed(ActionEvent e) {
 		Object s = e.getSource();
-		if(s==acceptButton){
-			accept=true;
-			dialog.dispose();
-		}else if(s==cancelButton){
+		if (s==cancelButton){
 			accept=false;
 			dialog.dispose();
 		}else if(s==resetButton){
 			reset();
 		}else if(s==saveButton){
 			conf.save(conf.getFile());
+			accept = true;
+			dialog.dispose();
 		}else if(s==removeButton){
-			tableModel.removeRow(table.getSelectedRow());
+			final int rowindex = table.getSelectedRow();
+			if(-1 < rowindex) {
+				tableModel.removeRow(rowindex);
+			}
 		}
 	}
 	

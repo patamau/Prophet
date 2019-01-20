@@ -1,6 +1,7 @@
 package prophet.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -11,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -19,24 +21,28 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
 import prophet.Prophet;
 import prophet.model.ISetting;
+import prophet.util.Configuration;
+import prophet.util.ConfigurationDialog;
+import prophet.util.Language;
 
 public class ProphetGUI implements ActionListener {
-
-	public static final String PROPHET_TITLE = "Prophet";
+	
+	public static final int LEFTPANEL_SIZE_PREF = 300, RIGHTPANEL_SIZE_PREF = 300, BOTTOMPANEL_SIZE_PREF = 26;
 	
 	private final Prophet prophet;
 	private final JFrame frame;
 	
-	private JMenuItem openItem, saveItem, exitItem;
+	private JMenuItem openItem, saveItem, configItem, exitItem;
 	
 	public ProphetGUI(final Prophet prophet) {
 		this.prophet = prophet;
 		
-		frame = new JFrame(PROPHET_TITLE);
+		frame = new JFrame(Prophet.APP+" "+Prophet.VERSION+" "+Prophet.BUILD);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
@@ -45,37 +51,56 @@ public class ProphetGUI implements ActionListener {
 		final JMenuBar menubar = new JMenuBar();
 		final JMenu fileMenu = new JMenu("File");		
 		
-		openItem = new JMenuItem("Open");
+		openItem = new JMenuItem(Language.string("Open Setting..."));
 		openItem.addActionListener(this);
-		saveItem = new JMenuItem("Save");
+		saveItem = new JMenuItem(Language.string("Save Setting..."));
 		saveItem.addActionListener(this);
-		exitItem = new JMenuItem("Quit");
+		configItem = new JMenuItem(Language.string("Options..."));
+		configItem.addActionListener(this);
+		exitItem = new JMenuItem(Language.string("Quit"));
 		exitItem.addActionListener(this);
 		
 		fileMenu.add(openItem);
 		fileMenu.add(saveItem);
+		fileMenu.add(new JSeparator());
+		fileMenu.add(configItem);
 		fileMenu.add(new JSeparator());
 		fileMenu.add(exitItem);
 		menubar.add(fileMenu);
 		frame.setJMenuBar(menubar);
 	}
 	
-	private void createLeftPanel() {
-		JPanel leftPanel = new JPanel();
-		frame.add(leftPanel, BorderLayout.WEST);
+	private JComponent createLeftPanel() {
+		final JPanel leftPanel = new JPanel();
+		leftPanel.setPreferredSize(new Dimension(LEFTPANEL_SIZE_PREF, 0));
+		return leftPanel;
 	}
 	
-	private void createCentralPanel() {
-		frame.add(prophet.getRenderer());
+	private JComponent createCentralPanel() {
+		final JSplitPane centralPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		centralPane.setOneTouchExpandable(true);
+		centralPane.setResizeWeight(1.0);
+		centralPane.setDividerSize(12);
+		centralPane.setLeftComponent(prophet.getRenderer());
+		centralPane.setRightComponent(createRightPanel());
+		final JSplitPane middlePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		middlePane.setOneTouchExpandable(true);
+		middlePane.setResizeWeight(0.0);
+		middlePane.setDividerSize(12);
+		middlePane.setRightComponent(centralPane);
+		middlePane.setLeftComponent(createLeftPanel());
+		return middlePane;
 	}
 	
-	private void createRightPanel() {
-		JPanel rightPanel = new JPanel();
-		frame.add(rightPanel, BorderLayout.EAST);
+	private JComponent createRightPanel() {
+		final JPanel rightPanel = new JPanel();
+		rightPanel.setPreferredSize(new Dimension(RIGHTPANEL_SIZE_PREF, 0));
+		return rightPanel;
 	}
 	
 	private void createBottomPanel() {
 		JPanel bottomPanel = new JPanel();
+		bottomPanel.setPreferredSize(new Dimension(0, BOTTOMPANEL_SIZE_PREF));
 		frame.add(bottomPanel, BorderLayout.SOUTH);
 	}
 	
@@ -83,9 +108,7 @@ public class ProphetGUI implements ActionListener {
 		frame.setLayout(new BorderLayout());
 		
 		createMenubar();
-		createLeftPanel();
-		createCentralPanel();
-		createRightPanel();
+		frame.add(createCentralPanel(), BorderLayout.CENTER);
 		createBottomPanel();
 		
 		frame.setSize(800, 500); //TODO: load configuration
@@ -156,6 +179,14 @@ public class ProphetGUI implements ActionListener {
 			}
 		}
 	}
+	
+	private void editConfiguration() {
+		ConfigurationDialog cdialog = new ConfigurationDialog(frame);
+		Configuration c = cdialog.showDialog(Configuration.getGlobalConfiguration());
+		if(null != c) {
+			Configuration.setGlobalConfiguration(c);
+		}
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -164,7 +195,9 @@ public class ProphetGUI implements ActionListener {
 			loadSetting();
 		} else if(src == saveItem) {
 			saveSetting();
-		} else if(src == exitItem) {
+		} else if(src == configItem) {
+			editConfiguration();
+		}else if(src == exitItem) {
 			frame.dispose();
 		} else {
 			//??

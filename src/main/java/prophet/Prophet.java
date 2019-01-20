@@ -22,8 +22,9 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	private static final Logger logger = Logger.getLogger(Prophet.class);
 	
 	public static final String 
+		APP = Prophet.class.getPackage().getImplementationTitle()==null?Prophet.class.getSimpleName():Prophet.class.getPackage().getImplementationTitle(),
 		VERSION = "0.1a",
-		BUILD = Prophet.class.getPackage().getImplementationVersion(),
+		BUILD = Prophet.class.getPackage().getImplementationVersion()==null?"[dev]":Prophet.class.getPackage().getImplementationVersion(),
 		AUTHOR = Prophet.class.getPackage().getImplementationVendor();
 
 	private final ISetting setting;
