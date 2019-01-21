@@ -7,10 +7,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
-import prophet.gui.ILayer;
 import prophet.gui.IRenderer;
 
-public class PictureLayer implements ILayer {
+public class PictureLayer extends LayerBase {
 	
 	public static final int CROSS_SIZ = 10; //pixels
 	

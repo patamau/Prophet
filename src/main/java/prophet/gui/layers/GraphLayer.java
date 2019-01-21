@@ -10,10 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import prophet.gui.ILayer;
 import prophet.gui.IRenderer;
 
-public class GraphLayer implements ILayer {
+public class GraphLayer extends LayerBase {
 
 	private final IRenderer renderer;
 	

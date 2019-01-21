@@ -1,18 +1,18 @@
-package prophet.gui;
+package prophet.gui.widgets;
 
 import java.awt.Point;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
-import javax.swing.JToolBar;
 
+import prophet.gui.IRenderer;
 import prophet.gui.renderers.IRendererListener;
 import prophet.model.IWorld;
 import prophet.util.Language;
 
 @SuppressWarnings("serial")
-public class PositionWidget extends JToolBar implements IRendererListener {
+public class PositionWidget extends WidgetBase implements IRendererListener {
 	
 	public static final String WTITLE = "Position";
 	
@@ -25,7 +25,6 @@ public class PositionWidget extends JToolBar implements IRendererListener {
 		this.renderer = renderer;
 		this.world = world;
 		renderer.addListener(this);
-		setFloatable(true);
 		zoomLabel = new JLabel("1x");
 		zoomLabel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 3));
 		positionLabel = new JLabel("0,0");
@@ -49,7 +48,7 @@ public class PositionWidget extends JToolBar implements IRendererListener {
 	public void onMouseMoved(final Point point) {
 		final double wx = renderer.getWorldX(point.x);
 		final double wy = renderer.getWorldY(point.y);
-		positionLabel.setText(String.format("%.0f°, %.0f", wx, wy));
+		positionLabel.setText(String.format("%.0f, %.0f", wx, wy));
 		positionLabel.invalidate();
 		final double px = world.toLongitude(wx);
 		final double py = world.toLatitude(wy);

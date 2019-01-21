@@ -1,14 +1,7 @@
 package prophet.model;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import javax.imageio.ImageIO;
-
-import prophet.Main;
 import prophet.util.Resources;
 
 public class SimpleMap implements IMap{

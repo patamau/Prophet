@@ -12,6 +12,8 @@ import javax.imageio.ImageIO;
 import prophet.gui.ProphetGUI;
 import prophet.gui.layers.GraphLayer;
 import prophet.gui.layers.GridLayer;
+import prophet.gui.widgets.MapsWidget;
+import prophet.gui.widgets.PositionWidget;
 import prophet.model.IMap;
 import prophet.model.IWorld;
 import prophet.model.SimpleMap;
@@ -111,6 +113,8 @@ public class Main {
 		//---  ----
 		
 		final ProphetGUI gui = new ProphetGUI(prophet);
+		gui.addWidget(new PositionWidget(prophet.getRenderer(), prophet.getSetting().getWorld()), ProphetGUI.COMPONENT_BOTTOM);
+		gui.addWidget(new MapsWidget(prophet.getSetting()), ProphetGUI.COMPONENT_LEFT);
 		gui.show();
 	}
 }

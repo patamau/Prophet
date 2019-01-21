@@ -3,10 +3,9 @@ package prophet.gui.layers;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import prophet.gui.ILayer;
 import prophet.gui.IRenderer;
 
-public class GridLayer implements ILayer {
+public class GridLayer extends LayerBase {
 	
 	public static final int CROSS_SIZ = 10; //pixels
 	

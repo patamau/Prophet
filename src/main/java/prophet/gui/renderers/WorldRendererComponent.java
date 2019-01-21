@@ -35,7 +35,7 @@ import prophet.model.IWorld;
 public class WorldRendererComponent extends JComponent implements IRenderer,
 	MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
 	
-	public static final double ZOOM_MAX = 1000.0d, ZOOM_MIN = 0.00001d;
+	public static final double ZOOM_MAX = 1000.0d, ZOOM_MIN = 0.001d;
 	
 	private final Cursor normalCursor, dragCursor;
 	private final Point mousePressedPos;
@@ -129,7 +129,9 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		synchronized(layers) {
 			//draw all layers
 			for(final ILayer layer : layers) {
-				layer.draw(g);
+				if(layer.isEnabled()) {
+					layer.draw(g);
+				}
 			}
 		}
 	}

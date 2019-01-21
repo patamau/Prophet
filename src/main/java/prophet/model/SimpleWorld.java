@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class SimpleWorld implements IWorld {
 
-	public static final double WORLD_RADIUS_DEF = 6378000d;
+	public static final double WORLD_RADIUS_DEF = 6378d; //6378 km is the Earth radius
 	
 	private double radius;
 	private double circonference, circonference2, circonference4;
@@ -112,9 +112,9 @@ public class SimpleWorld implements IWorld {
 	}
 	
 	@Override
-	public void getTowns(final List<ITown> towns) {
+	public void getTowns(final List<ITown> outTowns) {
 		synchronized(towns) {
-			towns.addAll(towns);
+			outTowns.addAll(towns);
 		}
 	}
 	
@@ -142,9 +142,9 @@ public class SimpleWorld implements IWorld {
 	}
 	
 	@Override
-	public void getMaps(final List<IMap> maps) {
+	public void getMaps(final List<IMap> outMaps) {
 		synchronized(maps) {
-			maps.addAll(maps);
+			outMaps.addAll(maps);
 		}
 	}
 	

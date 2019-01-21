@@ -5,14 +5,12 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -23,29 +21,55 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
-import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import prophet.Prophet;
+import prophet.gui.widgets.WidgetBase;
 import prophet.model.ISetting;
 import prophet.util.Configuration;
 import prophet.util.ConfigurationDialog;
 import prophet.util.Language;
+import prophet.util.Logger;
 
 public class ProphetGUI implements ActionListener {
 	
-	public static final int LEFTPANEL_SIZE_PREF = 300, RIGHTPANEL_SIZE_PREF = 300, BOTTOMPANEL_SIZE_PREF = 26;
+	private static final Logger logger = Logger.getLogger(ProphetGUI.class);
+	
+	public static final int LEFTPANEL_SIZE_PREF = 20, RIGHTPANEL_SIZE_PREF = 20, BOTTOMPANEL_SIZE_PREF = 20;
+	public static final int COMPONENT_LEFT = 0, COMPONENT_RIGHT = 1, COMPONENT_BOTTOM = 2;
 	
 	private final Prophet prophet;
-	private final JFrame frame;
+	private JFrame frame;
 	
+	private JComponent leftComponent, rightComponent, bottomComponent;
 	private JMenuItem openItem, saveItem, configItem, exitItem;
 	
 	public ProphetGUI(final Prophet prophet) {
 		this.prophet = prophet;
 		
-		frame = new JFrame(Prophet.APP+" "+Prophet.VERSION+" "+Prophet.BUILD);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		createGUI();
+	}
+	
+	/**
+	 * Adds the given widget to the specified constraint location, if any
+	 * @param widget
+	 * @param location COMPONENT_ flag where the widget will be (initially) placed
+	 */
+	public void addWidget(final WidgetBase widget, final int component) {
+		switch(component) {
+		case COMPONENT_BOTTOM:
+			bottomComponent.add(widget);
+			break;
+		case COMPONENT_LEFT:
+			leftComponent.add(widget);
+			break;
+		case COMPONENT_RIGHT:
+			rightComponent.add(widget);
+			break;
+		default:
+			logger.error("Adding widget ",widget.getName()," to unsupported component ",component);
+			break;
+		}
 	}
 	
 	private void createMenubar() {
@@ -73,9 +97,9 @@ public class ProphetGUI implements ActionListener {
 	}
 	
 	private JComponent createLeftPanel() {
-		final JPanel leftPanel = new JPanel();
-		leftPanel.setPreferredSize(new Dimension(LEFTPANEL_SIZE_PREF, 0));
-		return leftPanel;
+		leftComponent = new JPanel();
+		leftComponent.setPreferredSize(new Dimension(LEFTPANEL_SIZE_PREF, 0));
+		return leftComponent;
 	}
 	
 	private JComponent createCentralPanel() {
@@ -95,36 +119,34 @@ public class ProphetGUI implements ActionListener {
 	}
 	
 	private JComponent createRightPanel() {
-		final JPanel rightPanel = new JPanel();
-		rightPanel.setPreferredSize(new Dimension(RIGHTPANEL_SIZE_PREF, 0));
-		return rightPanel;
+		rightComponent = new JPanel();
+		rightComponent.setPreferredSize(new Dimension(RIGHTPANEL_SIZE_PREF, 0));
+		return rightComponent;
 	}
 	
-	private void createBottomPanel() {
-		final JPanel bottomPanel = new JPanel(new BorderLayout());
-		
-		final JToolBar positionWidget = new PositionWidget(prophet.getRenderer(), prophet.getSetting().getWorld());
-		bottomPanel.add(positionWidget, BorderLayout.EAST);
-		
-		frame.add(bottomPanel, BorderLayout.SOUTH);
+	private JComponent createBottomPanel() {
+		bottomComponent = new JPanel(new BorderLayout());
+		bottomComponent.setPreferredSize(new Dimension(0, BOTTOMPANEL_SIZE_PREF));
+		return bottomComponent;
 	}
 	
-	private void createAndShowGUI() {
+	private void createGUI() {
+		frame = new JFrame(Prophet.APP+" "+Prophet.VERSION+" "+Prophet.BUILD);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		
 		createMenubar();
 		frame.add(createCentralPanel(), BorderLayout.CENTER);
-		createBottomPanel();
+		frame.add(createBottomPanel(), BorderLayout.SOUTH);
 		
-		frame.setSize(800, 500); //TODO: load configuration
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
+		frame.setSize(800, 500); //TODO: load from configuration or adapt to content
 	}
 	
 	public void show() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				createAndShowGUI();
+				frame.setLocationRelativeTo(null);
+				frame.setVisible(true);
 			}
 		});
 	}
