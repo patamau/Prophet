@@ -1,0 +1,57 @@
+package prophet.model;
+
+import java.awt.geom.Point2D;
+import java.util.LinkedList;
+import java.util.List;
+
+public class SimpleBorder implements IBorder {
+
+	private final List<Point2D> points;
+	private String name;
+	
+	public SimpleBorder() {
+		points = new LinkedList<Point2D>();
+		this.name = "Unknown";
+	}
+	
+	@Override
+	public String getName() {
+		return name;
+	}
+	
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public void getPoints(final List<Point2D> outPoints) {
+		synchronized(points) {
+			outPoints.addAll(points);
+		}
+	}
+
+	@Override
+	public void addPoint(double x, double y) {
+		synchronized (points) {
+			points.add(new Point2D.Double(x, y));
+		}
+	}
+
+	@Override
+	public void removeLastPoint() {
+		synchronized (points) {
+			if(points.size()>0) {
+				points.remove(points.size()-1);
+			}
+		}
+	}
+
+	@Override
+	public void clearPoints() {
+		synchronized (points) {
+			points.clear();
+		}
+	}
+
+}
