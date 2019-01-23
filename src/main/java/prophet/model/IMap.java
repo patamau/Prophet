@@ -2,7 +2,7 @@ package prophet.model;
 
 import java.awt.image.BufferedImage;
 
-public interface IMap {
+public interface IMap extends IObservable {
 
 	public double getLatitude();
 	public double getLongitude();

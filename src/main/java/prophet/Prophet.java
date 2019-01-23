@@ -31,10 +31,10 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	private final WorldRendererComponent renderer;
 	private final ISerializer<ISetting> serializer;
 	
-	private final Map<IMap, ILayer> mapLayers;
+	private final Map<IMap, PictureLayer> mapLayers;
 	
 	public Prophet() {
-		mapLayers = new HashMap<IMap, ILayer>();
+		mapLayers = new HashMap<IMap, PictureLayer>();
 		setting = new SimpleSetting();
 		renderer = new WorldRendererComponent(setting.getWorld());
 		setting.getWorld().addWorldListener(this);
@@ -54,18 +54,29 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	}
 
 	@Override
-	public void onMapAdded(IMap map) {
+	public void onMapAdded(final IMap map) {
 		if(mapLayers.containsKey(map)) return;
 		logger.info("Map added: ",map.getPicturePath());
 		final Point2D offset = setting.getWorld().toCartesian(new Point2D.Double(map.getLongitude(), map.getLatitude()));
-		ILayer layer = new PictureLayer(renderer, map.getPicture(), map.getScale(), offset);
+		final PictureLayer layer = new PictureLayer(renderer, map.getPicture(), map.getScale(), offset);
 		mapLayers.put(map, layer);
 		renderer.addLayer(layer);
 		logger.info("Maps are now "+mapLayers.size());
 	}
+	
+	@Override
+	public void onMapChanged(final IMap map) {
+		logger.debug("Map changed");
+		final PictureLayer layer = mapLayers.get(map);
+		if(null != layer) {
+			final Point2D offset = setting.getWorld().toCartesian(new Point2D.Double(map.getLongitude(), map.getLatitude()));
+			layer.set(map.getPicture(), offset, map.getScale());
+			renderer.repaint();
+		}
+	}
 
 	@Override
-	public void onMapRemoved(IMap map) {
+	public void onMapRemoved(final IMap map) {
 		logger.info("Map removed: ",map.getPicturePath());
 		renderer.removeLayer(mapLayers.remove(map));
 		logger.info("Maps are now "+mapLayers.size());
@@ -81,25 +92,31 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	}
 
 	@Override
-	public void onTownAdded(ITown town) {
-		// TODO Auto-generated method stub
-		
+	public void onTownAdded(final ITown town) {
+		logger.debug("Town added");
+		//TODO: implement
+	}
+	
+	@Override
+	public void onTownChanged(final ITown map) {
+		logger.debug("Town changed");
+		//TODO: implement
 	}
 
 	@Override
-	public void onTownRemoved(ITown town) {
-		// TODO Auto-generated method stub
-		
+	public void onTownRemoved(final ITown town) {
+		logger.debug("Town removed");
+		//TODO: implement
 	}
 	
 	@Override
 	public void onTownsCleared() {
-		logger.info("Towns cleared");
-		// TODO
+		logger.debug("Towns cleared");
+		//TODO: implement
 	}
 
 	@Override
-	public void uncaughtException(Thread t, Throwable e) {
+	public void uncaughtException(final Thread t, final Throwable e) {
 		logger.error(e.getMessage());
 		e.printStackTrace();
 	}

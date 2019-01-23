@@ -1,10 +1,11 @@
 package prophet.model;
 
 import java.awt.image.BufferedImage;
+import java.util.Observable;
 
 import prophet.util.Resources;
 
-public class SimpleMap implements IMap{
+public class SimpleMap extends Observable implements IMap {
 	
 	private double latitude, longitude;
 	private double width, height;
@@ -30,33 +31,11 @@ public class SimpleMap implements IMap{
 	
 	@Override
 	public void setPicturePath(final String path) {
+		if(picturePath == path) return;
 		this.picturePath = path;
 		picture = Resources.getImage(path);
-		/*
-		final File f = new File(path);
-		final URL url;
-		if (!f.exists()) {
-			System.out.println("no such file "+path);
-			url = Main.class.getResource(path);
-		} else {
-			try {
-				url = f.toURI().toURL();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-				picture = null;
-				updateSize();
-				return;
-			}
-		}
-		try {
-			picture = ImageIO.read(url);
-		} catch (Exception e) {
-			System.out.println("bad url "+url+": file "+f+" path "+path);
-			picture = null;
-			e.printStackTrace();
-		}
-		*/
 		updateSize();
+		setChanged();
 	}
 	
 	@Override
@@ -81,12 +60,16 @@ public class SimpleMap implements IMap{
 
 	@Override
 	public void setLatitude(final double latitude) {
+		if(this.latitude==latitude) return;
 		this.latitude = latitude;
+		setChanged();
 	}
 
 	@Override
 	public void setLongitude(final double longitude) {
+		if(this.longitude==longitude) return;
 		this.longitude = longitude;
+		setChanged();
 	}
 
 	@Override
@@ -106,8 +89,10 @@ public class SimpleMap implements IMap{
 
 	@Override
 	public void setScale(final double scale) {
+		if(this.scale==scale) return;
 		this.scale = scale;
 		updateSize();
+		setChanged();
 	}
 
 }

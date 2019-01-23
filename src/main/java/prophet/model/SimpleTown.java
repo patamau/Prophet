@@ -1,6 +1,8 @@
 package prophet.model;
 
-public class SimpleTown implements ITown {
+import java.util.Observable;
+
+public class SimpleTown extends Observable implements ITown {
 	
 	private String name;
 	private double longitude, latitude;

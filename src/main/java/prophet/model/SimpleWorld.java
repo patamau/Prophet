@@ -4,6 +4,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 /**
@@ -12,7 +14,7 @@ import java.util.Set;
  * @author patam
  *
  */
-public class SimpleWorld implements IWorld {
+public class SimpleWorld implements IWorld, Observer {
 
 	public static final double WORLD_RADIUS_DEF = 6378d; //6378 km is the Earth radius
 	
@@ -41,11 +43,11 @@ public class SimpleWorld implements IWorld {
 	@Override
 	public void update() {
 		//notify the listeners of towns
-		for (ITown t: towns) {
+		for (final ITown t: towns) {
 			fireTownAdded(t);
 		}
 		//notify the listeners of maps
-		for (IMap m: maps) {
+		for (final IMap m: maps) {
 			fireMapAdded(m);
 		}
 	}
@@ -73,15 +75,23 @@ public class SimpleWorld implements IWorld {
 	
 	private void fireTownAdded(final ITown town) {
 		synchronized (listeners) {
-			for(IWorldListener l : listeners) {
+			for(final IWorldListener l : listeners) {
 				l.onTownAdded(town);
+			}
+		}
+	}
+	
+	private void fireTownChanged(final ITown town) {
+		synchronized (listeners) {
+			for(final IWorldListener l : listeners) {
+				l.onTownChanged(town);
 			}
 		}
 	}
 	
 	private void fireTownRemoved(final ITown town) {
 		synchronized (listeners) {
-			for(IWorldListener l : listeners) {
+			for(final IWorldListener l : listeners) {
 				l.onTownRemoved(town);
 			}
 		}
@@ -89,7 +99,7 @@ public class SimpleWorld implements IWorld {
 	
 	private void fireTownsCleared() {
 		synchronized (listeners) {
-			for(IWorldListener l : listeners) {
+			for(final IWorldListener l : listeners) {
 				l.onTownsCleared();;
 			}
 		}
@@ -100,14 +110,16 @@ public class SimpleWorld implements IWorld {
 		synchronized(towns) {
 			towns.add(town);
 		}
+		town.addObserver(this);
 		fireTownAdded(town);
 	}
-
+	
 	@Override
 	public void removeTown(final ITown town) {
 		synchronized(towns) {
 			towns.remove(town);
 		}
+		town.deleteObserver(this);
 		fireTownRemoved(town);
 	}
 	
@@ -121,6 +133,9 @@ public class SimpleWorld implements IWorld {
 	@Override
 	public void clearTowns() {
 		synchronized (towns) {
+			for(final ITown t : towns) {
+				t.deleteObserver(this);
+			}
 			towns.clear();
 		}
 	}
@@ -130,6 +145,7 @@ public class SimpleWorld implements IWorld {
 		synchronized(maps) {
 			maps.add(map);
 		}
+		map.addObserver(this);
 		fireMapAdded(map);
 	}
 
@@ -138,6 +154,7 @@ public class SimpleWorld implements IWorld {
 		synchronized(maps) {
 			maps.remove(map);
 		}
+		map.deleteObserver(this);
 		fireMapRemoved(map);
 	}
 	
@@ -151,21 +168,32 @@ public class SimpleWorld implements IWorld {
 	@Override
 	public void clearMaps() {
 		synchronized (maps) {
+			for(final IMap m : maps) {
+				m.deleteObserver(this);
+			}
 			maps.clear();
 		}
 	}
 	
 	private void fireMapAdded(final IMap map) {
 		synchronized (listeners) {
-			for(IWorldListener l : listeners) {
+			for(final IWorldListener l : listeners) {
 				l.onMapAdded(map);
+			}
+		}
+	}
+	
+	private void fireMapChanged(final IMap map) {
+		synchronized (listeners) {
+			for(final IWorldListener l : listeners) {
+				l.onMapChanged(map);
 			}
 		}
 	}
 	
 	private void fireMapRemoved(final IMap map) {
 		synchronized (listeners) {
-			for(IWorldListener l : listeners) {
+			for(final IWorldListener l : listeners) {
 				l.onMapRemoved(map);
 			}
 		}
@@ -173,7 +201,7 @@ public class SimpleWorld implements IWorld {
 	
 	private void fireMapsCleared() {
 		synchronized (listeners) {
-			for(IWorldListener l : listeners) {
+			for(final IWorldListener l : listeners) {
 				l.onMapsCleared();;
 			}
 		}
@@ -225,6 +253,15 @@ public class SimpleWorld implements IWorld {
 	@Override
 	public Point2D toCartesian(final Point2D p) {
 		return new Point2D.Double(fromLongitude(p.getX()), fromLatitude(p.getY()));
+	}
+
+	@Override
+	public void update(final Observable o, final Object arg) {
+		if(o instanceof IMap) {
+			fireMapChanged((IMap)o);
+		} else if (o instanceof ITown) {
+			fireTownChanged((ITown)o);
+		}
 	}
 	
 }

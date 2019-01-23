@@ -1,6 +1,6 @@
 package prophet.model;
 
-public interface ITown {
+public interface ITown extends IObservable {
 
 	public String getName();
 	public void setName(final String name);

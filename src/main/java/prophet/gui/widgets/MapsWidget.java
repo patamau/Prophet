@@ -15,8 +15,8 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
 
+import prophet.gui.KeyValueTableModel;
 import prophet.model.IMap;
 import prophet.model.ISetting;
 import prophet.model.ITown;
@@ -33,19 +33,19 @@ public class MapsWidget extends WidgetBase implements IWorldListener, ListSelect
 
 	private final static Logger logger = Logger.getLogger(MapsWidget.class);
 	
-	private final static String TITLE = "Maps";
+	private final static String WTITLE = "Maps";
 	
 	private final ISetting setting;
 	private final DefaultListModel<IMap> mapsListModel;
-	private final DefaultTableModel mapTableModel;
+	private final KeyValueTableModel mapTableModel;
 	private final JList<IMap> mapsList;
 	private final JTable mapTable;
 	
 	public MapsWidget(final ISetting setting) {
-		super(TITLE);
+		super(WTITLE);
 		this.setting = setting;
 		mapsListModel = new DefaultListModel<IMap>();
-		mapTableModel = new DefaultTableModel();
+		mapTableModel = new KeyValueTableModel();
 		
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints gc = new GridBagConstraints();
@@ -65,6 +65,7 @@ public class MapsWidget extends WidgetBase implements IWorldListener, ListSelect
 		mapPanel.setBorder(BorderFactory.createTitledBorder("Map"));
 		mapTable = new JTable(mapTableModel);
 		mapTable.setFillsViewportHeight(true);
+		mapTableModel.setColumnIdentifiers(new Object[] { "key", "value" });
 		mapPanel.add(mapTable, BorderLayout.CENTER);
 		this.add(mapPanel, gc);
 		
@@ -74,6 +75,7 @@ public class MapsWidget extends WidgetBase implements IWorldListener, ListSelect
 		for(final IMap m: maps) {
 			onMapAdded(m);
 		}
+		//list to world changes
 		setting.getWorld().addWorldListener(this);
 	}
 
@@ -81,6 +83,12 @@ public class MapsWidget extends WidgetBase implements IWorldListener, ListSelect
 	public void onMapAdded(IMap map) {
 		logger.debug("map ",map," added");
 		mapsListModel.addElement(map);
+	}
+	
+	@Override
+	public void onMapChanged(IMap map) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -97,6 +105,12 @@ public class MapsWidget extends WidgetBase implements IWorldListener, ListSelect
 
 	@Override
 	public void onTownAdded(ITown town) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void onTownChanged(ITown map) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -121,12 +135,7 @@ public class MapsWidget extends WidgetBase implements IWorldListener, ListSelect
 			final IMap map = mapsList.getSelectedValue();
 			if(null != map) {
 				logger.debug("selected map ", map);
-				mapTableModel.setDataVector(new Object[][]{
-				new Object[] { "Picture", map.getPicturePath()},
-				new Object[] { "Scale", map.getScale()},
-				new Object[] { "Longitude", map.getLongitude()},
-				new Object[] { "Latitude", map.getLatitude()},
-				}, new Object[] { "Key", "Value" } );
+				mapTableModel.setObject(map);
 				mapTable.invalidate();
 				mapTable.repaint();
 			}

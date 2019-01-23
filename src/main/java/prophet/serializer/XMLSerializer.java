@@ -4,9 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,6 +14,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import prophet.util.ClassUtils;
 import prophet.util.Logger;
 
 public class XMLSerializer<T> extends SerializerBase<T> {
@@ -26,50 +24,13 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 	protected XMLSerializer(Class<T> serializableClass) {
 		super(serializableClass);
 	}
-
-	/**
-	 * Retrieve all the non static, non volatile, non transient fields of the given class
-	 * @param c
-	 * @return
-	 */
-	private List<Field> getFields(final Class<?> c) {
-		final List<Field> rf = new ArrayList<Field>();
-		final Field[] fields = c.getDeclaredFields();
-		int fieldsn = fields.length;
-		for (int i = 0; i < fieldsn; ++i) {
-			final Field f = fields[i];
-			if (!Modifier.isStatic(f.getModifiers())
-					&& !Modifier.isVolatile(f.getModifiers())
-					&& !Modifier.isTransient(f.getModifiers())) {
-				f.setAccessible(true);
-				rf.add(f);
-			}
-		}
-		return rf;
-	}
-	
-	private Field getField(final Class<?> c, final String name) {
-		final Field[] fields = c.getDeclaredFields();
-		int fieldsn = fields.length;
-		for (int i = 0; i < fieldsn; ++i) {
-			final Field f = fields[i];
-			if(f.getName().equals(name)
-					&& !Modifier.isStatic(f.getModifiers())
-					&& !Modifier.isVolatile(f.getModifiers())
-					&& !Modifier.isTransient(f.getModifiers())) {
-				f.setAccessible(true);
-				return f;
-			}
-		}
-		return null;
-	}
 	
 	private void serializeAttributes(final Object object, final StringBuilder builder) {
 		builder.append(" class=\"");
 		builder.append(object.getClass().getName());
 		builder.append('"');
 		
-		for (Field f : getFields(object.getClass())) {
+		for (Field f : ClassUtils.getFields(object.getClass())) {
 			final String fname = f.getName();
 			final Class<?> ftype = f.getType();
 			try {
@@ -95,7 +56,7 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 	}
 	
 	private void serializeContent(final Object object, final StringBuilder builder) {
-		for (Field f : getFields(object.getClass())) {
+		for (Field f : ClassUtils.getFields(object.getClass())) {
 			final Class<?> ftype = f.getType();
 			try {
 				final Object fvalue = f.get(object);
@@ -127,21 +88,6 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 		return builder.toString();
 	}
 	
-	private String getSetterName(final String attribute) {
-		return "set"+Character.toUpperCase(attribute.charAt(0))+attribute.substring(1);
-	}
-	
-	private Method getSetterMethod(final Object object, final String methodName) {
-		Method[] omethods = object.getClass().getMethods();
-		for(Method m: omethods) {
-			final String mname = m.getName();
-			if(mname.equals(methodName)) {
-				return m;
-			}
-		}
-		return null;
-	}
-	
 	protected void parseAttributes(final Element element, final Object object) {
 		final NamedNodeMap nodes = element.getAttributes();
 		final int nlen = nodes.getLength();
@@ -149,26 +95,10 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 			Node n = nodes.item(i);
 			final String aname = n.getNodeName();
 			final String avalue = n.getNodeValue();
-			final String setterName = getSetterName(aname);
-			final Method amethod = getSetterMethod(object, setterName);
-			if(null != amethod) {
-				final Class<?>[] atypes = amethod.getParameterTypes();
-				final Class<?> atype = atypes[0];
-				try {
-					if(atype.isAssignableFrom(String.class)) {
-						amethod.invoke(object, avalue);
-					} else if(atype.isAssignableFrom(double.class)) {
-						amethod.invoke(object, Double.valueOf(avalue));
-					} else { 
-						throw new IllegalArgumentException("No such supported type "+atype);
-					}
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-				}
+			try {
+				ClassUtils.setFieldValue(object, aname, avalue);
+			} catch (Exception e) {
+				logger.error(e);
 			}
 		}
 	}
@@ -185,7 +115,7 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 				}
 				final String classValue = classAttribute.getNodeValue();
 				final String cname = n.getNodeName();
-				final Field cfield = getField(object.getClass(), cname);
+				final Field cfield = ClassUtils.getField(object.getClass(), cname);
 				final Class<?> classType = Class.forName(classValue);
 				Object cobject = cfield.get(object);
 				if(null == cobject) {

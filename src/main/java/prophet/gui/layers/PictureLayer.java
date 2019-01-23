@@ -14,7 +14,7 @@ public class PictureLayer extends LayerBase {
 	public static final int CROSS_SIZ = 10; //pixels
 	
 	private final IRenderer renderer;
-	private final BufferedImage image;
+	private BufferedImage image;
 	private double scale;
 	private final Point imageOffset;
 	
@@ -24,7 +24,20 @@ public class PictureLayer extends LayerBase {
 		this.image = image;
 		this.renderer = renderer;
 		this.scale = scale;
-		this.imageOffset = new Point((int)Math.round(offset.getX() - image.getWidth()*scale/2), (int)Math.round(offset.getY() + image.getHeight()*scale/2)) ;
+		this.imageOffset = new Point();
+		updateOffset(offset);
+	}
+	
+	public void set(final BufferedImage image, final Point2D offset, final double scale) {
+		this.image = image;
+		this.scale = scale;
+		updateOffset(offset);
+	}
+	
+	private void updateOffset(final Point2D offset) {
+		final int x = (int)Math.round(offset.getX() - image.getWidth()*scale/2);
+		final int y = (int)Math.round(offset.getY() + image.getHeight()*scale/2);
+		imageOffset.setLocation(x, y) ;
 	}
 
 	@Override
