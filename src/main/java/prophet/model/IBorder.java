@@ -1,6 +1,6 @@
 package prophet.model;
 
-public interface IBorder extends IPolygon {
+public interface IBorder extends IPolygon, IObservable {
 
 	public String getName();
 	public void setName(final String name);

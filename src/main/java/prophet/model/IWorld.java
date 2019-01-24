@@ -22,6 +22,11 @@ public interface IWorld {
 	public void getMaps(final List<IMap> maps);
 	public void clearMaps();
 	
+	public void addBorder(final IBorder border);
+	public void removeBorder(final IBorder map);
+	public void getBorders(final List<IBorder> maps);
+	public void clearBorders();
+	
 	public void setRadius(final double radius);
 	
 	public double getRadius();

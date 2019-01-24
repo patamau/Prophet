@@ -1,5 +1,7 @@
 package prophet;
 
+import java.awt.BorderLayout;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,15 +14,19 @@ import javax.imageio.ImageIO;
 import prophet.gui.ProphetGUI;
 import prophet.gui.layers.GraphLayer;
 import prophet.gui.layers.GridLayer;
+import prophet.gui.layers.IconsLayer;
+import prophet.gui.layers.PolygonsLayer;
 import prophet.gui.widgets.MapsWidget;
 import prophet.gui.widgets.PositionWidget;
 import prophet.gui.widgets.TownsWidget;
 import prophet.model.IMap;
 import prophet.model.IWorld;
+import prophet.model.SimpleBorder;
 import prophet.model.SimpleMap;
 import prophet.util.Configuration;
 import prophet.util.Logger;
 import prophet.util.Options;
+import prophet.util.Resources;
 
 public class Main {
 	
@@ -111,6 +117,20 @@ public class Main {
 		//prophet.getSetting().getWorld().addMap(map2);
 		prophet.getRenderer().addLayer(new GraphLayer(prophet.getRenderer()));
 		prophet.getRenderer().addLayer(new GridLayer(prophet.getRenderer()));
+		final PolygonsLayer pl = new PolygonsLayer(prophet.getRenderer());
+		final SimpleBorder border = new SimpleBorder();
+		border.addPoint(0, 0);
+		border.addPoint(20, 10);
+		border.addPoint(10, 15);
+		border.addPoint(0, 15);
+		pl.addPolygon(border);
+		prophet.getRenderer().addLayer(pl);
+		final IconsLayer il = new IconsLayer(prophet.getRenderer());
+		il.setIcon(Resources.getImage("icons/town.png"));
+		il.addPosition(new Point(10,20));
+		il.addPosition(new Point(100,220));
+		il.addPosition(new Point(-90,-80));
+		prophet.getRenderer().addLayer(il);
 		//---  ----
 		
 		final ProphetGUI gui = new ProphetGUI(prophet);

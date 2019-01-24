@@ -41,7 +41,7 @@ public class PictureLayer extends LayerBase {
 	}
 
 	@Override
-	public void draw(Graphics2D g) {
+	public void draw(final Graphics2D g) {
 		final AffineTransform at = new AffineTransform();
 		final Point offset = renderer.getOffset();
 		final double zoom = renderer.getZoom() * scale;

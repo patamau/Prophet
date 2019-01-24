@@ -3,7 +3,6 @@ package prophet.gui.layers;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -28,17 +27,26 @@ public class PolygonsLayer extends LayerBase {
 	private void drawPolygons(final Graphics2D g) {
 		final List<Point2D> points = new LinkedList<Point2D>();
 		Point2D prev;
-		for(final IPolygon poly : polygons)
-		{
-			poly.getPoints(points);
-			if(points.size()==0) continue;
-			prev = points.get(points.size()-1);
-			for(final Point2D p : points)
+		synchronized(polygons) {
+			for(final IPolygon poly : polygons)
 			{
-				g.drawLine(renderer.getScreenX(prev.getX()), renderer.getScreenY(prev.getY()),
-						renderer.getScreenX(p.getX()), renderer.getScreenY(p.getY()));
+				poly.getPoints(points);
+				if(points.size()==0) continue;
+				prev = points.get(points.size()-1);
+				for(final Point2D p : points)
+				{
+					g.drawLine(renderer.getScreenX(prev.getX()), renderer.getScreenY(prev.getY()),
+							renderer.getScreenX(p.getX()), renderer.getScreenY(p.getY()));
+					prev = p;
+				}
+				points.clear();
 			}
-			points.clear();
+		}
+	}
+	
+	public void addPolygon(final IPolygon p) {
+		synchronized(polygons) {
+			polygons.add(p);
 		}
 	}
 	

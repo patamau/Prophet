@@ -3,8 +3,9 @@ package prophet.model;
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
 
-public class SimpleBorder implements IBorder {
+public class SimpleBorder extends Observable implements IBorder {
 
 	private final List<Point2D> points;
 	private String name;
@@ -53,5 +54,4 @@ public class SimpleBorder implements IBorder {
 			points.clear();
 		}
 	}
-
 }

@@ -22,6 +22,7 @@ public class SimpleWorld implements IWorld, Observer {
 	private double circonference, circonference2, circonference4;
 	private List<ITown> towns;
 	private List<IMap> maps;
+	private List<IBorder> borders;
 	private Set<IWorldListener> listeners;
 	
 	public SimpleWorld() {
@@ -138,6 +139,7 @@ public class SimpleWorld implements IWorld, Observer {
 			}
 			towns.clear();
 		}
+		fireTownsCleared();
 	}
 
 	@Override
@@ -173,6 +175,7 @@ public class SimpleWorld implements IWorld, Observer {
 			}
 			maps.clear();
 		}
+		fireMapsCleared();
 	}
 	
 	private void fireMapAdded(final IMap map) {
@@ -204,6 +207,37 @@ public class SimpleWorld implements IWorld, Observer {
 			for(final IWorldListener l : listeners) {
 				l.onMapsCleared();;
 			}
+		}
+	}
+	
+	@Override
+	public void addBorder(final IBorder border) {
+		synchronized (borders) {
+			borders.add(border);
+		}
+	}
+	
+	@Override
+	public void removeBorder(final IBorder border) {
+		synchronized (borders) {
+			borders.remove(border);
+		}
+	}
+	
+	@Override
+	public void getBorders(final List<IBorder> maps) {
+		synchronized (borders) {
+			maps.addAll(borders);
+		}
+	}
+	
+	@Override
+	public void clearBorders() {
+		synchronized (borders) {
+			for(final IBorder b : borders) {
+				b.deleteObserver(this);
+			}
+			borders.clear();
 		}
 	}
 	

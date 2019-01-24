@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
@@ -18,11 +20,15 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import prophet.gui.ILayer;
 import prophet.gui.IRenderer;
 import prophet.model.IWorld;
+import prophet.model.SimpleTown;
 
 /**
  * Handles rendering of custom layers in a JPanel.
@@ -33,7 +39,7 @@ import prophet.model.IWorld;
  */
 @SuppressWarnings("serial")
 public class WorldRendererComponent extends JComponent implements IRenderer,
-	MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
+	MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener, ActionListener {
 	
 	public static final double ZOOM_MAX = 1000.0d, ZOOM_MIN = 0.001d;
 	
@@ -45,6 +51,9 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	private final List<ILayer> layers;
 	private final Set<IRendererListener> listeners;
 	private final IWorld world;
+	private JMenuItem newTownItem;
+
+	private final JPopupMenu contextMenu;
 	
 	public WorldRendererComponent(final IWorld world)
 	{
@@ -57,11 +66,22 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		currentSize = new Dimension(getWidth(), getHeight());
 		offset = new Point();
 		zoom = 1d;
+		contextMenu = createContextMenu();
 		
 		addMouseMotionListener(this);
 		addMouseListener(this);
 		addMouseWheelListener(this);
 		addComponentListener(this);
+	}
+	
+	private JPopupMenu createContextMenu() {
+		final JPopupMenu contextMenu  = new JPopupMenu();
+		final JMenu editMenu = new JMenu("Editor");
+		newTownItem = new JMenuItem("New Town");
+		newTownItem.addActionListener(this);
+		editMenu.add(newTownItem);
+		contextMenu.add(editMenu);
+		return contextMenu;
 	}
 	
 	@Override
@@ -214,10 +234,8 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(e.isShiftDown() || e.isControlDown()){
-			offset.x = 0;
-			offset.y = 0;
-			repaint();
+		if (SwingUtilities.isRightMouseButton(e)) {
+			contextMenu.show(this, e.getX(), e.getY());
 		}
 	}
 
@@ -237,7 +255,6 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -274,6 +291,17 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	public void componentHidden(ComponentEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		final Object src = e.getSource();
+		if(newTownItem == src) {
+			final SimpleTown town = new SimpleTown();
+			town.setLongitude(world.toLongitude(getWorldX(mousePressedPos.x)));
+			town.setLatitude(world.toLatitude(getWorldY(mousePressedPos.y)));
+			world.addTown(town);
+		}
 	}
 	
 }
