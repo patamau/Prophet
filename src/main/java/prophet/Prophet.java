@@ -1,10 +1,12 @@
 package prophet;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
+import prophet.gui.layers.IconsLayer;
 import prophet.gui.layers.PictureLayer;
 import prophet.gui.renderers.WorldRendererComponent;
 import prophet.model.IMap;
@@ -15,11 +17,19 @@ import prophet.model.SimpleSetting;
 import prophet.gui.ILayer;
 import prophet.serializer.ISerializer;
 import prophet.serializer.XMLSettingSerializer;
+import prophet.util.Configuration;
 import prophet.util.Logger;
+import prophet.util.Resources;
 
 public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	
 	private static final Logger logger = Logger.getLogger(Prophet.class);
+	
+	public static final String
+		ICON_TOWN_KEY = "icon.town.url";
+	
+	public static final String
+		ICON_TOWN_DEF = "icons/town.png";
 	
 	public static final String 
 		APP = Prophet.class.getPackage().getImplementationTitle()==null?Prophet.class.getSimpleName():Prophet.class.getPackage().getImplementationTitle(),
@@ -32,13 +42,21 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	private final ISerializer<ISetting> serializer;
 	
 	private final Map<IMap, PictureLayer> mapLayers;
+	private final IconsLayer townsLayer;
 	
 	public Prophet() {
 		mapLayers = new HashMap<IMap, PictureLayer>();
 		setting = new SimpleSetting();
 		renderer = new WorldRendererComponent(setting.getWorld());
+		townsLayer = new IconsLayer(renderer);
 		setting.getWorld().addWorldListener(this);
 		serializer = new XMLSettingSerializer();
+	}
+	
+	public void initialize() {
+		final String townIconUrl = Configuration.getGlobal(ICON_TOWN_KEY, ICON_TOWN_DEF);
+		townsLayer.setIcon(Resources.getImage(townIconUrl));
+		renderer.addLayer(townsLayer);
 	}
 	
 	public ISerializer<ISetting> getSettingSerializer() {
@@ -61,7 +79,6 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 		final PictureLayer layer = new PictureLayer(renderer, map.getPicture(), map.getScale(), offset);
 		mapLayers.put(map, layer);
 		renderer.addLayer(layer);
-		logger.info("Maps are now "+mapLayers.size());
 	}
 	
 	@Override
@@ -93,26 +110,29 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 
 	@Override
 	public void onTownAdded(final ITown town) {
-		logger.debug("Town added");
-		//TODO: implement
+		final Point2D p = setting.getWorld().toCartesian(new Point2D.Double(town.getLongitude(), town.getLatitude()));
+		logger.debug("Town added at ", p, " (",town.getLongitude(),",",town.getLatitude(),")");
+		townsLayer.addPoint(town);
 	}
 	
 	@Override
 	public void onTownChanged(final ITown map) {
 		logger.debug("Town changed");
-		//TODO: implement
+		renderer.repaint();
 	}
 
 	@Override
 	public void onTownRemoved(final ITown town) {
 		logger.debug("Town removed");
-		//TODO: implement
+		townsLayer.removePoint(town);
+		renderer.repaint();
 	}
 	
 	@Override
 	public void onTownsCleared() {
 		logger.debug("Towns cleared");
-		//TODO: implement
+		townsLayer.clearPoints();
+		renderer.repaint();
 	}
 
 	@Override

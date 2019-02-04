@@ -29,6 +29,7 @@ public class SimpleWorld implements IWorld, Observer {
 		setRadius(WORLD_RADIUS_DEF);
 		this.towns = new ArrayList<ITown>();
 		this.maps = new ArrayList<IMap>();
+		this.borders = new ArrayList<IBorder>();
 		this.listeners = new HashSet<IWorldListener>();
 	}
 	
@@ -108,6 +109,7 @@ public class SimpleWorld implements IWorld, Observer {
 	
 	@Override
 	public void addTown(final ITown town) {
+		town.updateWorldPosition(this);
 		synchronized(towns) {
 			towns.add(town);
 		}
@@ -294,6 +296,8 @@ public class SimpleWorld implements IWorld, Observer {
 		if(o instanceof IMap) {
 			fireMapChanged((IMap)o);
 		} else if (o instanceof ITown) {
+			final ITown town = (ITown)o;
+			town.updateWorldPosition(this);
 			fireTownChanged((ITown)o);
 		}
 	}

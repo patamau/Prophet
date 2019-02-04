@@ -29,6 +29,7 @@ import prophet.gui.ILayer;
 import prophet.gui.IRenderer;
 import prophet.model.IWorld;
 import prophet.model.SimpleTown;
+import prophet.util.Logger;
 
 /**
  * Handles rendering of custom layers in a JPanel.
@@ -41,10 +42,12 @@ import prophet.model.SimpleTown;
 public class WorldRendererComponent extends JComponent implements IRenderer,
 	MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener, ActionListener {
 	
+	private static final Logger logger = Logger.getLogger(WorldRendererComponent.class);
+	
 	public static final double ZOOM_MAX = 1000.0d, ZOOM_MIN = 0.001d;
 	
 	private final Cursor normalCursor, dragCursor;
-	private final Point mousePressedPos;
+	private final Point mousePressedPos, mouseContextPos;
 	private final Point offset;
 	private double zoom;
 	private Dimension currentSize;
@@ -62,7 +65,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		listeners = new HashSet<IRendererListener>();
 		normalCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
 		dragCursor = new Cursor(Cursor.HAND_CURSOR);
-		mousePressedPos = new Point(-1,-1);
+		mousePressedPos = mouseContextPos = new Point(-1,-1);
 		currentSize = new Dimension(getWidth(), getHeight());
 		offset = new Point();
 		zoom = 1d;
@@ -224,17 +227,13 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		mousePressedPos.setLocation(e.getPoint());
-
-		double wx = getWorldX(e.getPoint().x);
-		double wy = getWorldY(e.getPoint().y);
-		double lon = world.toLongitude(wx);
-		double lat = world.toLatitude(wy);
 		fireCursorMoved(e.getPoint());
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (SwingUtilities.isRightMouseButton(e)) {
+			mouseContextPos.setLocation(e.getPoint());
 			contextMenu.show(this, e.getX(), e.getY());
 		}
 	}
@@ -298,9 +297,10 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		final Object src = e.getSource();
 		if(newTownItem == src) {
 			final SimpleTown town = new SimpleTown();
-			town.setLongitude(world.toLongitude(getWorldX(mousePressedPos.x)));
-			town.setLatitude(world.toLatitude(getWorldY(mousePressedPos.y)));
+			town.setLongitude(world.toLongitude(getWorldX(mouseContextPos.x)));
+			town.setLatitude(world.toLatitude(getWorldY(mouseContextPos.y)));
 			world.addTown(town);
+			this.repaint();
 		}
 	}
 	

@@ -2,8 +2,6 @@ package prophet.serializer;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -103,7 +101,7 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 		}
 	}
 
-	protected void parseChildren(final Element element, final Object object) {
+	protected void parseChildren(final Element element, final Object object, final Object parent) {
 		final NodeList children = element.getChildNodes();
 		final int nlen = children.getLength();
 		for(int i=0; i<nlen; ++i) {
@@ -127,7 +125,7 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 				ISerializer<?> classSerializer = getSerializer(classType);
 				if(null != classSerializer) {
 					if(classSerializer instanceof XMLSerializer<?>) {
-						((XMLSerializer<?>)classSerializer).parse((Element)n, cobject);
+						((XMLSerializer<?>)classSerializer).parse((Element)n, cobject, object);
 						//cfield.set(object, cobject);
 					} else {
 						throw new UnsupportedOperationException("Invalid serializer type "+classSerializer.getClass().getName()+" instead of "+this.getClass().getName());
@@ -145,18 +143,18 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 		}
 	}
 
-	protected void parse(final Element element, final Object object) {
+	protected void parse(final Element element, final Object object, final Object parent) {
 		parseAttributes(element, object);
-		parseChildren(element, object);
+		parseChildren(element, object, parent);
 	}
 	
 	@Override
-	public void parse(final String source, final Object object) throws Exception {
+	public void parse(final String source, final Object object, final Object parent) throws Exception {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		ByteArrayInputStream input = new ByteArrayInputStream(source.getBytes("UTF-8"));
 		Document document = builder.parse(input);
 		Element root = document.getDocumentElement();
-		parse(root, object);
+		parse(root, object, parent);
 	}
 }

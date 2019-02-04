@@ -1,13 +1,10 @@
 package prophet.model;
 
-public interface ITown extends IObservable {
+public interface ITown extends IPoi {
 
-	public String getName();
-	public void setName(final String name);
+	public double getSize();
+	public int getPopulation();
 	
-	public double getLongitude();
-	public double getLatitude();
-	
-	public void setLongitude(final double longitude);
-	public void setLatitude(final double latitude);
+	public void setSize(final double size);
+	public void setPopulation(final int population);
 }

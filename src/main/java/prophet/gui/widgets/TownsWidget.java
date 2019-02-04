@@ -64,10 +64,10 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 		this.add(mapPanel, gc);
 		
 		//populate the lists
-		final List<IMap> maps = new ArrayList<IMap>();
-		setting.getWorld().getMaps(maps);
-		for(final IMap m: maps) {
-			onMapAdded(m);
+		final List<ITown> towns = new ArrayList<ITown>();
+		setting.getWorld().getTowns(towns);
+		for(final ITown t: towns) {
+			onTownAdded(t);
 		}
 		//list to world changes
 		setting.getWorld().addWorldListener(this);

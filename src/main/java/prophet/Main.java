@@ -103,13 +103,17 @@ public class Main {
 				prophet.finalize();
 			}
 		});
+		
+		prophet.initialize();
 
 		//temporary shit ----
+		/*
 		final IWorld world = prophet.getSetting().getWorld();
 		final IMap map = new SimpleMap();
-		map.setPicturePath("maps/earth.jpg");
+		map.setPicturePath("maps/earth3.jpg");
 		map.setScale(world.getCirconference()/map.getPicture().getWidth());
 		prophet.getSetting().getWorld().addMap(map);
+		*/
 
 		//final IMap map2 = new SimpleMap();
 		//map2.setPicturePath("/map-full.jpg");
@@ -125,12 +129,6 @@ public class Main {
 		border.addPoint(0, 15);
 		pl.addPolygon(border);
 		prophet.getRenderer().addLayer(pl);
-		final IconsLayer il = new IconsLayer(prophet.getRenderer());
-		il.setIcon(Resources.getImage("icons/town.png"));
-		il.addPosition(new Point(10,20));
-		il.addPosition(new Point(100,220));
-		il.addPosition(new Point(-90,-80));
-		prophet.getRenderer().addLayer(il);
 		//---  ----
 		
 		final ProphetGUI gui = new ProphetGUI(prophet);

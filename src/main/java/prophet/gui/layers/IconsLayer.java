@@ -4,10 +4,12 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import prophet.gui.IRenderer;
+import prophet.model.IPoi;
 import prophet.util.Logger;
 
 public class IconsLayer extends LayerBase {
@@ -15,12 +17,12 @@ public class IconsLayer extends LayerBase {
 	private static final Logger logger = Logger.getLogger(IconsLayer.class);
 	
 	private final IRenderer renderer;
-	private final List<Point> points;
+	private final List<IPoi> points;
 	private Image icon;
 	private double scale;
 	
 	public IconsLayer (final IRenderer renderer) {
-		points = new ArrayList<Point>();
+		points = new ArrayList<IPoi>();
 		this.renderer = renderer;
 		this.scale = 1d;
 	}
@@ -29,9 +31,21 @@ public class IconsLayer extends LayerBase {
 		this.icon = icon;
 	}
 
-	public void addPosition(final Point p) {
+	public void addPoint(final IPoi p) {
 		synchronized(points) {
 			points.add(p);
+		}
+	}
+	
+	public void removePoint(final IPoi p) {
+		synchronized (points) {
+			points.remove(p);
+		}
+	}
+	
+	public void clearPoints() {
+		synchronized (points) {
+			points.clear();
 		}
 	}
 
@@ -42,11 +56,15 @@ public class IconsLayer extends LayerBase {
 		if(zoom>1d) zoom = 1d;
 		if(zoom<0.1d) return;
 		synchronized(points) {
-			for(final Point p: points) {
+			for(final IPoi poi: points) {
 				final AffineTransform at = new AffineTransform();
-				at.translate(offset.getX()+(p.x*renderer.getZoom()), offset.getY()-(p.y*renderer.getZoom()));
+				final Point2D p = poi.getWorldPosition();
+				final double x = offset.getX()+(p.getX()*renderer.getZoom())-((double)icon.getWidth(null)*zoom)/2d;
+				final double y = offset.getY()+(p.getY()*renderer.getZoom())-((double)icon.getHeight(null)*zoom)/2d;
+				at.translate(x, y);
 				at.scale(zoom, zoom);
 				g.drawImage(icon, at, null);
+				g.drawString(poi.getName(), (float)x, (float)y);
 			}
 		}
 	}

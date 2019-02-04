@@ -169,8 +169,7 @@ public class ProphetGUI implements ActionListener {
 				final String source = new String(Files.readAllBytes(Paths.get(f.getAbsolutePath())), StandardCharsets.UTF_8);
 				final ISetting setting = prophet.getSetting();
 				setting.reset();
-				prophet.getSettingSerializer().parse(source, prophet.getSetting());
-				setting.update();
+				prophet.getSettingSerializer().parse(source, prophet.getSetting(), null);
 			} catch (Throwable e) {
 				JOptionPane.showMessageDialog(frame, "Error while loading file: "+e.getMessage(), "Load error", JOptionPane.ERROR_MESSAGE);
 			}

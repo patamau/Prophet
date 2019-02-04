@@ -60,7 +60,6 @@ public class GridLayer extends LayerBase {
 				break;
 			}
 		}
-		System.err.println("using grid step "+gridStep+" at pixel size "+pixelSize);
 		return gridStep;
 	}
 

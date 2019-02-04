@@ -1,7 +1,6 @@
 package prophet.gui;
 
 import java.lang.reflect.Field;
-import java.util.Observable;
 
 import javax.swing.table.DefaultTableModel;
 

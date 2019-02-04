@@ -16,5 +16,5 @@ public interface ISerializer<T> {
 	 * @param setting
 	 * @throws Exception 
 	 */
-	public void parse(final String source, final Object object) throws Exception;
+	public void parse(final String source, final Object object, final Object parent) throws Exception;
 }

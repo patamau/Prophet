@@ -40,7 +40,7 @@ class SerializerTest {
 		System.out.println(xml);
 		final ISetting setting2 = new SimpleSetting();
 		try {
-			serializer.parse(xml, setting2);
+			serializer.parse(xml, setting2, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
