@@ -232,7 +232,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (SwingUtilities.isRightMouseButton(e)) {
+		if(SwingUtilities.isRightMouseButton(e)) {
 			mouseContextPos.setLocation(e.getPoint());
 			contextMenu.show(this, e.getX(), e.getY());
 		}

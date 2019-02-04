@@ -19,11 +19,12 @@ public class SimpleWorld implements IWorld, Observer {
 	public static final double WORLD_RADIUS_DEF = 6378d; //6378 km is the Earth radius
 	
 	private double radius;
-	private double circonference, circonference2, circonference4;
 	private List<ITown> towns;
 	private List<IMap> maps;
 	private List<IBorder> borders;
-	private Set<IWorldListener> listeners;
+	
+	private transient double circonference, circonference2, circonference4;
+	private transient Set<IWorldListener> listeners;
 	
 	public SimpleWorld() {
 		setRadius(WORLD_RADIUS_DEF);

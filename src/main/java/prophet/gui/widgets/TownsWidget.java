@@ -3,16 +3,23 @@ package prophet.gui.widgets;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -21,10 +28,11 @@ import prophet.model.IMap;
 import prophet.model.ISetting;
 import prophet.model.ITown;
 import prophet.model.IWorldListener;
+import prophet.util.Language;
 import prophet.util.Logger;
 
 @SuppressWarnings("serial")
-public class TownsWidget extends WidgetBase implements IWorldListener, ListSelectionListener {
+public class TownsWidget extends WidgetBase implements IWorldListener, ListSelectionListener, MouseListener, ActionListener {
 
 	private final static Logger logger = Logger.getLogger(TownsWidget.class);
 	private final static String WTITLE = "Towns";
@@ -34,6 +42,8 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 	private final KeyValueTableModel townTableModel;
 	private final JList<ITown> townsList;
 	private final JTable townTable;
+	private final JPopupMenu contextMenu;
+	private final JMenuItem removeTownItem;
 	
 	public TownsWidget(final ISetting setting) {
 		super(WTITLE);
@@ -49,6 +59,7 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 		gc.fill = 1;
 		townsList = new JList<ITown>(townsListModel);
 		townsList.addListSelectionListener(this);
+		townsList.addMouseListener(this);
 		townsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		final JPanel mapsPanel = new JPanel();
 		mapsPanel.setBorder(BorderFactory.createTitledBorder("Towns"));
@@ -71,6 +82,16 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 		}
 		//list to world changes
 		setting.getWorld().addWorldListener(this);
+
+		removeTownItem = new JMenuItem(Language.string("Remove"));
+		contextMenu = createContextMenu();
+	}	
+	
+	private JPopupMenu createContextMenu() {
+		final JPopupMenu contextMenu  = new JPopupMenu();
+		contextMenu.add(removeTownItem);
+		removeTownItem.addActionListener(this);
+		return contextMenu;
 	}
 
 	@Override
@@ -98,7 +119,7 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 	}
 
 	@Override
-	public void onTownAdded(ITown town) {
+	public void onTownAdded(final ITown town) {
 		logger.debug("town ",town," added");
 		townsListModel.addElement(town);
 	}
@@ -110,15 +131,13 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 	}
 
 	@Override
-	public void onTownRemoved(ITown town) {
-		// TODO Auto-generated method stub
-		
+	public void onTownRemoved(final ITown town) {
+		townsListModel.removeElement(town);
 	}
 
 	@Override
 	public void onTownsCleared() {
-		// TODO Auto-generated method stub
-		
+		townsListModel.removeAllElements();
 	}
 	
 	@Override
@@ -133,6 +152,52 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 				townsList.invalidate();
 				townsList.repaint();
 			}
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if(SwingUtilities.isRightMouseButton(e)) {
+			final int idx = townsList.locationToIndex(e.getPoint());
+			if(idx < 0) return;
+			townsList.setSelectedIndex(idx);
+			final ITown town = townsList.getSelectedValue();
+			if(null == town) return;
+			logger.debug("selected item is ",town);
+			contextMenu.show(townsList, e.getX(), e.getY());
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		final Object src = e.getSource();
+		if(src == removeTownItem) {
+			townTableModel.setObject(null);
+			setting.getWorld().removeTown(townsList.getSelectedValue());
 		}
 	}
 

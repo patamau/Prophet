@@ -3,16 +3,23 @@ package prophet.gui.widgets;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -21,6 +28,7 @@ import prophet.model.IMap;
 import prophet.model.ISetting;
 import prophet.model.ITown;
 import prophet.model.IWorldListener;
+import prophet.util.Language;
 import prophet.util.Logger;
 
 /**
@@ -29,7 +37,7 @@ import prophet.util.Logger;
  *
  */
 @SuppressWarnings("serial")
-public class MapsWidget extends WidgetBase implements IWorldListener, ListSelectionListener {
+public class MapsWidget extends WidgetBase implements IWorldListener, ListSelectionListener, MouseListener, ActionListener {
 
 	private final static Logger logger = Logger.getLogger(MapsWidget.class);
 	
@@ -40,6 +48,8 @@ public class MapsWidget extends WidgetBase implements IWorldListener, ListSelect
 	private final KeyValueTableModel mapTableModel;
 	private final JList<IMap> mapsList;
 	private final JTable mapTable;
+	private final JPopupMenu contextMenu;
+	private final JMenuItem removeMapItem;
 	
 	public MapsWidget(final ISetting setting) {
 		super(WTITLE);
@@ -55,6 +65,7 @@ public class MapsWidget extends WidgetBase implements IWorldListener, ListSelect
 		gc.fill = 1;
 		mapsList = new JList<IMap>(mapsListModel);
 		mapsList.addListSelectionListener(this);
+		mapsList.addMouseListener(this);
 		mapsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		final JPanel mapsPanel = new JPanel();
 		mapsPanel.setBorder(BorderFactory.createTitledBorder("Maps"));
@@ -77,10 +88,20 @@ public class MapsWidget extends WidgetBase implements IWorldListener, ListSelect
 		}
 		//list to world changes
 		setting.getWorld().addWorldListener(this);
+		
+		removeMapItem = new JMenuItem(Language.string("Remove"));
+		contextMenu = createContextMenu();
+	}
+
+	private JPopupMenu createContextMenu() {
+		final JPopupMenu contextMenu  = new JPopupMenu();
+		contextMenu.add(removeMapItem);
+		removeMapItem.addActionListener(this);
+		return contextMenu;
 	}
 
 	@Override
-	public void onMapAdded(IMap map) {
+	public void onMapAdded(final IMap map) {
 		logger.debug("map ",map," added");
 		mapsListModel.addElement(map);
 	}
@@ -92,15 +113,13 @@ public class MapsWidget extends WidgetBase implements IWorldListener, ListSelect
 	}
 
 	@Override
-	public void onMapRemoved(IMap map) {
-		// TODO Auto-generated method stub
-		
+	public void onMapRemoved(final IMap map) {
+		mapsListModel.removeElement(map);
 	}
 
 	@Override
 	public void onMapsCleared() {
-		// TODO Auto-generated method stub
-		
+		mapsListModel.removeAllElements();
 	}
 
 	@Override
@@ -139,6 +158,52 @@ public class MapsWidget extends WidgetBase implements IWorldListener, ListSelect
 				mapTable.invalidate();
 				mapTable.repaint();
 			}
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if(SwingUtilities.isRightMouseButton(e)) {
+			final int idx = mapsList.locationToIndex(e.getPoint());
+			if(idx < 0) return;
+			mapsList.setSelectedIndex(idx);
+			final IMap map = mapsList.getSelectedValue();
+			if(null == map) return;
+			logger.debug("selected item is ",map);
+			contextMenu.show(mapsList, e.getX(), e.getY());
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		final Object src = e.getSource();
+		if(src == removeMapItem) {
+			mapTableModel.setObject(null);
+			setting.getWorld().removeMap(mapsList.getSelectedValue());
 		}
 	}
 

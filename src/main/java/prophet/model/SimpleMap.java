@@ -8,10 +8,11 @@ import prophet.util.Resources;
 public class SimpleMap extends Observable implements IMap {
 	
 	private double latitude, longitude;
-	private double width, height;
 	private double scale; //this is meters per pixels
 	private String picturePath;
+	
 	private transient BufferedImage picture;
+	private transient double width, height;
 	
 	public SimpleMap() {
 		latitude = longitude = 0d;
