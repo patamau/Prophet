@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import prophet.gui.KeyValueTableModel;
+import prophet.model.IBorder;
 import prophet.model.IMap;
 import prophet.model.ISetting;
 import prophet.model.ITown;
@@ -205,6 +206,30 @@ public class MapsWidget extends WidgetBase implements IWorldListener, ListSelect
 			mapTableModel.setObject(null);
 			setting.getWorld().removeMap(mapsList.getSelectedValue());
 		}
+	}
+
+	@Override
+	public void onBorderAdded(IBorder Border) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBorderChanged(IBorder map) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBorderRemoved(IBorder Border) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBordersCleared() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

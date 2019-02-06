@@ -16,6 +16,7 @@ import prophet.gui.layers.GraphLayer;
 import prophet.gui.layers.GridLayer;
 import prophet.gui.layers.IconsLayer;
 import prophet.gui.layers.PolygonsLayer;
+import prophet.gui.widgets.BordersWidget;
 import prophet.gui.widgets.MapsWidget;
 import prophet.gui.widgets.PositionWidget;
 import prophet.gui.widgets.TownsWidget;
@@ -121,20 +122,22 @@ public class Main {
 		//prophet.getSetting().getWorld().addMap(map2);
 		prophet.getRenderer().addLayer(new GraphLayer(prophet.getRenderer()));
 		prophet.getRenderer().addLayer(new GridLayer(prophet.getRenderer()));
-		final PolygonsLayer pl = new PolygonsLayer(prophet.getRenderer());
+		//final PolygonsLayer pl = new PolygonsLayer(prophet.getRenderer());
 		final SimpleBorder border = new SimpleBorder();
 		border.addPoint(0, 0);
 		border.addPoint(20, 10);
 		border.addPoint(10, 15);
 		border.addPoint(0, 15);
-		pl.addPolygon(border);
-		prophet.getRenderer().addLayer(pl);
+		//pl.addPolygon(border);
+		//prophet.getRenderer().addLayer(pl);
+		prophet.getSetting().getWorld().addBorder(border);
 		//---  ----
 		
 		final ProphetGUI gui = new ProphetGUI(prophet);
 		gui.addWidget(new PositionWidget(prophet.getRenderer(), prophet.getSetting().getWorld()), ProphetGUI.COMPONENT_BOTTOM);
 		gui.addWidget(new MapsWidget(prophet.getSetting()), ProphetGUI.COMPONENT_LEFT);
 		gui.addWidget(new TownsWidget(prophet.getSetting()), ProphetGUI.COMPONENT_LEFT);
+		gui.addWidget(new BordersWidget(prophet.getSetting()), ProphetGUI.COMPONENT_RIGHT);
 		gui.show();
 	}
 }

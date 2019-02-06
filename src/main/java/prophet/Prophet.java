@@ -8,7 +8,9 @@ import java.util.Map;
 
 import prophet.gui.layers.IconsLayer;
 import prophet.gui.layers.PictureLayer;
+import prophet.gui.layers.PolygonsLayer;
 import prophet.gui.renderers.WorldRendererComponent;
+import prophet.model.IBorder;
 import prophet.model.IMap;
 import prophet.model.ISetting;
 import prophet.model.ITown;
@@ -43,12 +45,14 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	
 	private final Map<IMap, PictureLayer> mapLayers;
 	private final IconsLayer townsLayer;
+	private final PolygonsLayer bordersLayer;
 	
 	public Prophet() {
 		mapLayers = new HashMap<IMap, PictureLayer>();
 		setting = new SimpleSetting();
 		renderer = new WorldRendererComponent(setting.getWorld());
 		townsLayer = new IconsLayer(renderer);
+		bordersLayer = new PolygonsLayer(renderer);
 		setting.getWorld().addWorldListener(this);
 		serializer = new XMLSettingSerializer();
 	}
@@ -56,6 +60,7 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	public void initialize() {
 		final String townIconUrl = Configuration.getGlobal(ICON_TOWN_KEY, ICON_TOWN_DEF);
 		townsLayer.setIcon(Resources.getImage(townIconUrl));
+		renderer.addLayer(bordersLayer);
 		renderer.addLayer(townsLayer);
 	}
 	
@@ -144,5 +149,32 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	public void finalize() {
 		//TODO: save everything's needed to be saved and close streams properly
 		Logger.clearStreams();
+	}
+
+	@Override
+	public void onBorderAdded(final IBorder border) {
+		logger.debug("Border added ", border);
+		bordersLayer.addPolygon(border);
+		renderer.repaint();
+	}
+
+	@Override
+	public void onBorderChanged(final IBorder border) {
+		logger.debug("Border changed ", border);
+		renderer.repaint();
+	}
+
+	@Override
+	public void onBorderRemoved(final IBorder border) {
+		logger.debug("Border removed ", border);
+		bordersLayer.removePolygon(border);
+		renderer.repaint();
+	}
+
+	@Override
+	public void onBordersCleared() {
+		logger.debug("Borders cleared");
+		bordersLayer.clearPolygons();
+		renderer.repaint();
 	}
 }

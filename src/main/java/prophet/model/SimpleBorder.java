@@ -22,7 +22,9 @@ public class SimpleBorder extends Observable implements IBorder {
 	
 	@Override
 	public void setName(String name) {
+		if(this.name == name) return;
 		this.name = name;
+		setChanged();
 	}
 
 	@Override
@@ -37,6 +39,7 @@ public class SimpleBorder extends Observable implements IBorder {
 		synchronized (points) {
 			points.add(new Point2D.Double(x, y));
 		}
+		setChanged();
 	}
 
 	@Override
@@ -46,6 +49,7 @@ public class SimpleBorder extends Observable implements IBorder {
 				points.remove(points.size()-1);
 			}
 		}
+		setChanged();
 	}
 
 	@Override
@@ -53,5 +57,6 @@ public class SimpleBorder extends Observable implements IBorder {
 		synchronized (points) {
 			points.clear();
 		}
+		setChanged();
 	}
 }

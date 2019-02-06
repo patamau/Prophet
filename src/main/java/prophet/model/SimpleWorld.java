@@ -8,6 +8,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
+import prophet.util.Logger;
+
 /**
  * This simplistic world approach is used to intuitively support flat coordinates system commonly used for visualization.
  * It implies the surface curvature is not relevant and provides hints rather than actual world coordinates.
@@ -16,6 +18,8 @@ import java.util.Set;
  */
 public class SimpleWorld implements IWorld, Observer {
 
+	private static final Logger logger = Logger.getLogger(SimpleWorld.class);
+	
 	public static final double WORLD_RADIUS_DEF = 6378d; //6378 km is the Earth radius
 	
 	private double radius;
@@ -38,9 +42,11 @@ public class SimpleWorld implements IWorld, Observer {
 	public void reset() {
 		this.towns.clear();
 		this.maps.clear();
+		this.borders.clear();
 		//do not remove the listeners, we want to keep them, just reset the data
 		fireTownsCleared();
 		fireMapsCleared();
+		fireBordersCleared();
 	}
 	
 	@Override
@@ -52,6 +58,10 @@ public class SimpleWorld implements IWorld, Observer {
 		//notify the listeners of maps
 		for (final IMap m: maps) {
 			fireMapAdded(m);
+		}
+		//notify the listeners of maps
+		for (final IBorder b: borders) {
+			fireBorderAdded(b);
 		}
 	}
 	
@@ -215,9 +225,12 @@ public class SimpleWorld implements IWorld, Observer {
 	
 	@Override
 	public void addBorder(final IBorder border) {
+		logger.debug("border added ",border);
 		synchronized (borders) {
 			borders.add(border);
 		}
+		border.addObserver(this);
+		fireBorderAdded(border);
 	}
 	
 	@Override
@@ -225,6 +238,8 @@ public class SimpleWorld implements IWorld, Observer {
 		synchronized (borders) {
 			borders.remove(border);
 		}
+		border.deleteObserver(this);
+		fireBorderRemoved(border);
 	}
 	
 	@Override
@@ -241,6 +256,39 @@ public class SimpleWorld implements IWorld, Observer {
 				b.deleteObserver(this);
 			}
 			borders.clear();
+		}
+		fireBordersCleared();
+	}
+	
+	private void fireBorderAdded(final IBorder map) {
+		synchronized (listeners) {
+			for(final IWorldListener l : listeners) {
+				l.onBorderAdded(map);
+			}
+		}
+	}
+	
+	private void fireBorderChanged(final IBorder map) {
+		synchronized (listeners) {
+			for(final IWorldListener l : listeners) {
+				l.onBorderChanged(map);
+			}
+		}
+	}
+	
+	private void fireBorderRemoved(final IBorder map) {
+		synchronized (listeners) {
+			for(final IWorldListener l : listeners) {
+				l.onBorderRemoved(map);
+			}
+		}
+	}
+	
+	private void fireBordersCleared() {
+		synchronized (listeners) {
+			for(final IWorldListener l : listeners) {
+				l.onBordersCleared();;
+			}
 		}
 	}
 	
@@ -295,11 +343,15 @@ public class SimpleWorld implements IWorld, Observer {
 	@Override
 	public void update(final Observable o, final Object arg) {
 		if(o instanceof IMap) {
-			fireMapChanged((IMap)o);
+			final IMap map = (IMap)o;
+			fireMapChanged(map);
 		} else if (o instanceof ITown) {
 			final ITown town = (ITown)o;
 			town.updateWorldPosition(this);
 			fireTownChanged((ITown)o);
+		} else if (o instanceof IBorder) {
+			final IBorder border = (IBorder)o;
+			fireBorderChanged(border);
 		}
 	}
 	

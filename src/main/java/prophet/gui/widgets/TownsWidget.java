@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import prophet.gui.KeyValueTableModel;
+import prophet.model.IBorder;
 import prophet.model.IMap;
 import prophet.model.ISetting;
 import prophet.model.ITown;
@@ -61,18 +62,18 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 		townsList.addListSelectionListener(this);
 		townsList.addMouseListener(this);
 		townsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		final JPanel mapsPanel = new JPanel();
-		mapsPanel.setBorder(BorderFactory.createTitledBorder("Towns"));
-		mapsPanel.add(new JScrollPane(townsList));
-		this.add(mapsPanel, gc);
+		final JPanel townsPanel = new JPanel();
+		townsPanel.setBorder(BorderFactory.createTitledBorder("Towns"));
+		townsPanel.add(new JScrollPane(townsList));
+		this.add(townsPanel, gc);
 		++gc.gridy;
-		final JPanel mapPanel = new JPanel(new BorderLayout());
-		mapPanel.setBorder(BorderFactory.createTitledBorder("Map"));
+		final JPanel townPanel = new JPanel(new BorderLayout());
+		townPanel.setBorder(BorderFactory.createTitledBorder("Town"));
 		townTable = new JTable(townTableModel);
 		townTable.setFillsViewportHeight(true);
 		townTableModel.setColumnIdentifiers(new Object[] { "key", "value" });
-		mapPanel.add(townTable, BorderLayout.CENTER);
-		this.add(mapPanel, gc);
+		townPanel.add(townTable, BorderLayout.CENTER);
+		this.add(townPanel, gc);
 		
 		//populate the lists
 		final List<ITown> towns = new ArrayList<ITown>();
@@ -145,10 +146,10 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 		if(e.getValueIsAdjusting()) return;
 		final Object src = e.getSource();
 		if(src == townsList) {
-			final ITown map = townsList.getSelectedValue();
-			if(null != map) {
-				logger.debug("selected town ", map);
-				townTableModel.setObject(map);
+			final ITown town = townsList.getSelectedValue();
+			if(null != town) {
+				logger.debug("selected town ", town);
+				townTableModel.setObject(town);
 				townsList.invalidate();
 				townsList.repaint();
 			}
@@ -199,6 +200,30 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 			townTableModel.setObject(null);
 			setting.getWorld().removeTown(townsList.getSelectedValue());
 		}
+	}
+
+	@Override
+	public void onBorderAdded(IBorder Border) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBorderChanged(IBorder map) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBorderRemoved(IBorder Border) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBordersCleared() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
