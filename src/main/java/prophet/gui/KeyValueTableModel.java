@@ -49,7 +49,7 @@ public class KeyValueTableModel extends DefaultTableModel {
 	public void setValueAt(Object v, int r, int c) {
 		final String key = (String) this.getValueAt(r, 0);
 		final String current = ClassUtils.getFieldValue(object, key);
-		if(current.equals(v)) return;
+		if(null == current || current.equals(v)) return;
 		logger.debug("setting ", key, " to ", v," for ", object);
 		try {
 			ClassUtils.setFieldValue(object, key, (String)v);

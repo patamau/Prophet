@@ -137,7 +137,7 @@ public class Main {
 		gui.addWidget(new PositionWidget(prophet.getRenderer(), prophet.getSetting().getWorld()), ProphetGUI.COMPONENT_BOTTOM);
 		gui.addWidget(new MapsWidget(prophet.getSetting()), ProphetGUI.COMPONENT_LEFT);
 		gui.addWidget(new TownsWidget(prophet.getSetting()), ProphetGUI.COMPONENT_LEFT);
-		gui.addWidget(new BordersWidget(prophet.getSetting()), ProphetGUI.COMPONENT_RIGHT);
+		gui.addWidget(new BordersWidget(prophet.getSetting(), prophet.getRenderer()), ProphetGUI.COMPONENT_RIGHT);
 		gui.show();
 	}
 }

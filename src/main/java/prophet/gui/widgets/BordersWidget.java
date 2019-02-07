@@ -25,6 +25,7 @@ import javax.swing.event.ListSelectionListener;
 
 import prophet.gui.KeyValueTableModel;
 import prophet.model.IBorder;
+import prophet.model.IBorderSelectionManager;
 import prophet.model.IMap;
 import prophet.model.ITown;
 import prophet.model.ISetting;
@@ -45,10 +46,12 @@ public class BordersWidget extends WidgetBase implements IWorldListener, ListSel
 	private final JTable borderTable;
 	private final JPopupMenu contextMenu;
 	private final JMenuItem removeBorderItem;
+	private final IBorderSelectionManager selectionManager;
 	
-	public BordersWidget(final ISetting setting) {
+	public BordersWidget(final ISetting setting, final IBorderSelectionManager selectionManager) {
 		super(WTITLE);
 		this.setting = setting;
+		this.selectionManager = selectionManager;
 		bordersListModel = new DefaultListModel<IBorder>();
 		borderTableModel = new KeyValueTableModel();
 		
@@ -159,6 +162,7 @@ public class BordersWidget extends WidgetBase implements IWorldListener, ListSel
 				borderTableModel.setObject(border);
 				bordersList.invalidate();
 				bordersList.repaint();
+				selectionManager.onBorderSelected(border);
 			}
 		}
 	}
@@ -173,6 +177,7 @@ public class BordersWidget extends WidgetBase implements IWorldListener, ListSel
 			if(null == border) return;
 			logger.debug("selected item is ",border);
 			contextMenu.show(bordersList, e.getX(), e.getY());
+			selectionManager.onBorderSelected(border);
 		}
 	}
 

@@ -14,7 +14,7 @@ public class SimpleBorder extends Observable implements IBorder {
 		points = new LinkedList<Point2D>();
 		this.name = "Unknown";
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
@@ -25,6 +25,23 @@ public class SimpleBorder extends Observable implements IBorder {
 		if(this.name == name) return;
 		this.name = name;
 		setChanged();
+	}
+	
+	@Override
+	public Point2D getNearestPoint(final double x, final double y, final double maxDist) {
+		double mindist = maxDist;
+		double d;
+		Point2D nearest = null;
+		synchronized (points) {
+			for(Point2D p : points) {
+				d = p.distanceSq(x, y);
+				if (d < mindist) {
+					nearest = p;
+					mindist = d;
+				}
+			}
+		}
+		return nearest;
 	}
 
 	@Override
@@ -41,15 +58,23 @@ public class SimpleBorder extends Observable implements IBorder {
 		}
 		setChanged();
 	}
-
+	
 	@Override
-	public void removeLastPoint() {
+	public void removePoint(Point2D p) {
 		synchronized (points) {
-			if(points.size()>0) {
-				points.remove(points.size()-1);
-			}
+			points.remove(p);
 		}
 		setChanged();
+	}
+
+	@Override
+	public Point2D getLastPoint() {
+		synchronized (points) {
+			if(points.size()>0) {
+				return points.get(points.size()-1);
+			}
+		}
+		return null;
 	}
 
 	@Override

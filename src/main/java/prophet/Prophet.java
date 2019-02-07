@@ -1,11 +1,11 @@
 package prophet;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
+import prophet.gui.ILayer;
 import prophet.gui.layers.IconsLayer;
 import prophet.gui.layers.PictureLayer;
 import prophet.gui.layers.PolygonsLayer;
@@ -16,7 +16,6 @@ import prophet.model.ISetting;
 import prophet.model.ITown;
 import prophet.model.IWorldListener;
 import prophet.model.SimpleSetting;
-import prophet.gui.ILayer;
 import prophet.serializer.ISerializer;
 import prophet.serializer.XMLSettingSerializer;
 import prophet.util.Configuration;

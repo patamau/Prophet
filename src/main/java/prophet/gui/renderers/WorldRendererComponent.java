@@ -14,6 +14,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,11 +24,17 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
 import prophet.gui.ILayer;
 import prophet.gui.IRenderer;
+import prophet.model.IBorder;
+import prophet.model.IBorderSelectionManager;
+import prophet.model.ITown;
+import prophet.model.ITownSelectionManager;
 import prophet.model.IWorld;
+import prophet.model.SimpleBorder;
 import prophet.model.SimpleTown;
 import prophet.util.Logger;
 
@@ -40,7 +47,8 @@ import prophet.util.Logger;
  */
 @SuppressWarnings("serial")
 public class WorldRendererComponent extends JComponent implements IRenderer,
-	MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener, ActionListener {
+	MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener, ActionListener, 
+	IBorderSelectionManager, ITownSelectionManager {
 	
 	private static final Logger logger = Logger.getLogger(WorldRendererComponent.class);
 	
@@ -54,7 +62,11 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	private final List<ILayer> layers;
 	private final Set<IRendererListener> listeners;
 	private final IWorld world;
-	private JMenuItem newTownItem;
+	private JMenuItem newTownItem, newBorderItem;
+	private JMenuItem addBorderPointItem, removeBorderPointItem;
+	
+	private ITown selectedTown;
+	private IBorder selectedBorder;
 
 	private final JPopupMenu contextMenu;
 	
@@ -82,7 +94,17 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		final JMenu editMenu = new JMenu("Editor");
 		newTownItem = new JMenuItem("New Town");
 		newTownItem.addActionListener(this);
+		newBorderItem = new JMenuItem("New Border");
+		newBorderItem.addActionListener(this);
+		addBorderPointItem = new JMenuItem("Add Border Point");
+		addBorderPointItem.addActionListener(this);
+		removeBorderPointItem = new JMenuItem("Remove Border Point");
+		removeBorderPointItem.addActionListener(this);
 		editMenu.add(newTownItem);
+		editMenu.add(newBorderItem);
+		editMenu.add(new JSeparator());
+		editMenu.add(addBorderPointItem);
+		editMenu.add(removeBorderPointItem);
 		contextMenu.add(editMenu);
 		return contextMenu;
 	}
@@ -301,7 +323,53 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 			town.setLatitude(world.toLatitude(getWorldY(mouseContextPos.y)));
 			world.addTown(town);
 			this.repaint();
+		} else if(newBorderItem == src) {
+			final SimpleBorder border = new SimpleBorder();
+			border.addPoint(
+					(getWorldX(mouseContextPos.x)), 
+					(-getWorldY(mouseContextPos.y)));
+			world.addBorder(border);
+			this.repaint();
+		} else if(addBorderPointItem == src) {
+			if(null == selectedBorder) return;
+			selectedBorder.addPoint(
+					(getWorldX(mouseContextPos.x)), 
+					(-getWorldY(mouseContextPos.y)));
+			this.repaint();
+		} else if(removeBorderPointItem == src) {
+			if(null == selectedBorder) return;
+			Point2D p = selectedBorder.getNearestPoint(
+					getWorldX(mouseContextPos.x),
+					-getWorldY(mouseContextPos.y), 5.0);
+			if(null != p) {
+				selectedBorder.removePoint(p);
+			} else {
+				logger.warning("no point to remove from border ",selectedBorder);
+			}
+			this.repaint();
 		}
+	}
+
+	@Override
+	public void onTownSelected(final ITown town) {
+		if(selectedTown == town) return;
+		selectedTown = town;
+	}
+	
+	@Override
+	public ITown getSelectedTown() {
+		return selectedTown;
+	}
+
+	@Override
+	public void onBorderSelected(final IBorder border) {
+		if(selectedBorder == border) return;
+		selectedBorder = border;
+	}
+	
+	@Override
+	public IBorder getSelectedBorder() {
+		return selectedBorder;
 	}
 	
 }
