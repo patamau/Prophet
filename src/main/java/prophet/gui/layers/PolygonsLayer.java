@@ -34,7 +34,8 @@ public class PolygonsLayer extends LayerBase {
 				poly.getPoints(points);
 				if(points.size()==0) continue;
 				prev = points.get(points.size()-1);
-				g.drawString(poly.getName(), renderer.getScreenX(prev.getX()), renderer.getScreenY(prev.getY()));
+				final Point2D center = poly.getCenter();
+				g.drawString(poly.getName(), renderer.getScreenX(center.getX()), renderer.getScreenY(center.getY()));
 				for(final Point2D p : points)
 				{
 					g.drawLine(renderer.getScreenX(prev.getX()), renderer.getScreenY(prev.getY()),

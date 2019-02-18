@@ -9,4 +9,6 @@ public interface IPolygon {
 	public void setName(final String name);
 
 	public void getPoints(final List<Point2D> outPoints);
+	
+	public Point2D getCenter();
 }

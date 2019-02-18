@@ -63,7 +63,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	private final Set<IRendererListener> listeners;
 	private final IWorld world;
 	private JMenuItem newTownItem, newBorderItem;
-	private JMenuItem addBorderPointItem, removeBorderPointItem;
+	private JMenuItem addBorderPointItem, insertBorderPointItem, removeBorderPointItem;
 	
 	private ITown selectedTown;
 	private IBorder selectedBorder;
@@ -98,12 +98,15 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		newBorderItem.addActionListener(this);
 		addBorderPointItem = new JMenuItem("Add Border Point");
 		addBorderPointItem.addActionListener(this);
+		insertBorderPointItem = new JMenuItem("Insert Border Point");
+		insertBorderPointItem.addActionListener(this);
 		removeBorderPointItem = new JMenuItem("Remove Border Point");
 		removeBorderPointItem.addActionListener(this);
 		editMenu.add(newTownItem);
 		editMenu.add(newBorderItem);
 		editMenu.add(new JSeparator());
 		editMenu.add(addBorderPointItem);
+		editMenu.add(insertBorderPointItem);
 		editMenu.add(removeBorderPointItem);
 		contextMenu.add(editMenu);
 		return contextMenu;
@@ -155,6 +158,11 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	@Override
 	public int getScreenSize(double size) {
 		return (int)Math.round(size * zoom);
+	}
+	
+	@Override
+	public double getWorldSize(int pixels) {
+		return (double)pixels / zoom;
 	}
 	
 	@Override
@@ -336,11 +344,22 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 					(getWorldX(mouseContextPos.x)), 
 					(-getWorldY(mouseContextPos.y)));
 			this.repaint();
+		} else if(insertBorderPointItem == src) {
+			if(null == selectedBorder) return;
+			final double x = getWorldX(mouseContextPos.x);
+			final double y = -getWorldY(mouseContextPos.y);
+			final int i = selectedBorder.getNearestSegment(x, y);
+			if(i >= 0) {
+				selectedBorder.addPoint(i, x, y);
+			} else {
+				logger.warning("no reference point found on border ",selectedBorder);
+			}
+			this.repaint();
 		} else if(removeBorderPointItem == src) {
 			if(null == selectedBorder) return;
-			Point2D p = selectedBorder.getNearestPoint(
+			final Point2D p = selectedBorder.getNearestPoint(
 					getWorldX(mouseContextPos.x),
-					-getWorldY(mouseContextPos.y), 5.0);
+					-getWorldY(mouseContextPos.y), getWorldSize(15));
 			if(null != p) {
 				selectedBorder.removePoint(p);
 			} else {

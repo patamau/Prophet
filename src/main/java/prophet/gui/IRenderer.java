@@ -22,6 +22,7 @@ public interface IRenderer {
 	public double getWorldX(final int x);
 	public double getWorldY(final int y);
 	public int getScreenSize(final double size);
+	public double getWorldSize(final int pixels);
 	public Point getOffset();
 	
 	public int getWidth();
