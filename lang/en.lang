@@ -1,16 +1,18 @@
 #English en - v.0.3
-#Sun Jan 20 21:34:19 CET 2019
-Position=Position
+#Mon Mar 25 11:28:00 CET 2019
+Down=Down
 Configuration=Configuration
+Position=Position
 Reset=Reset
 Open\ Setting...=Open Setting...
 Save\ Setting...=Save Setting...
 Options...=Options...
+Up=Up
 Reset\ entries\ to\ their\ original\ value=Reset entries to their original value
 Remove=Remove
-Quit=Quit
 Remove\ the\ currently\ selected\ entry=Remove the currently selected entry
-Apply\ and\ save\ the\ configuration\ to\ file=Apply and save the configuration to file
+Quit=Quit
 Discard\ changes\ and\ exit=Discard changes and exit
+Apply\ and\ save\ the\ configuration\ to\ file=Apply and save the configuration to file
 Cancel=Cancel
 Save=Save

@@ -6,6 +6,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
 
+import prophet.gui.ILayer;
 import prophet.gui.IRenderer;
 import prophet.gui.renderers.IRendererListener;
 import prophet.model.IWorld;
@@ -55,4 +56,27 @@ public class PositionWidget extends WidgetBase implements IRendererListener {
 		polarLabel.setText(String.format("%.2f° LON, %.2f° LAT", px, py));
 	}
 
+	@Override
+	public void onLayerAdded(ILayer layer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLayerRemoved(ILayer layer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLayersCleared() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLayersChanged() {
+		// TODO Auto-generated method stub
+		
+	}
 }

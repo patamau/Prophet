@@ -35,6 +35,7 @@ import prophet.model.ITown;
 import prophet.model.ITownSelectionManager;
 import prophet.model.IWorld;
 import prophet.model.SimpleBorder;
+import prophet.model.SimpleMap;
 import prophet.model.SimpleTown;
 import prophet.util.Logger;
 
@@ -62,7 +63,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	private final List<ILayer> layers;
 	private final Set<IRendererListener> listeners;
 	private final IWorld world;
-	private JMenuItem newTownItem, newBorderItem;
+	private JMenuItem newTownItem, newBorderItem, newMapItem;
 	private JMenuItem addBorderPointItem, insertBorderPointItem, removeBorderPointItem;
 	
 	private ITown selectedTown;
@@ -96,6 +97,8 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		newTownItem.addActionListener(this);
 		newBorderItem = new JMenuItem("New Border");
 		newBorderItem.addActionListener(this);
+		newMapItem = new JMenuItem("New Map");
+		newMapItem.addActionListener(this);
 		addBorderPointItem = new JMenuItem("Add Border Point");
 		addBorderPointItem.addActionListener(this);
 		insertBorderPointItem = new JMenuItem("Insert Border Point");
@@ -104,6 +107,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		removeBorderPointItem.addActionListener(this);
 		editMenu.add(newTownItem);
 		editMenu.add(newBorderItem);
+		editMenu.add(newMapItem);
 		editMenu.add(new JSeparator());
 		editMenu.add(addBorderPointItem);
 		editMenu.add(insertBorderPointItem);
@@ -189,22 +193,46 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		}
 	}
 	
+	public void getLayers(final List<ILayer> outLayers) {
+		synchronized (layers) {
+			outLayers.addAll(layers);
+		}
+	}
+	
 	public void addLayer(final ILayer layer) {
 		synchronized (layers) {
 			layers.add(layer);
 		}
+		fireLayerAdded(layer);
 	}
 	
 	public void removeLayer(final ILayer layer) {
 		synchronized (layers) {
 			layers.remove(layer);
 		}
+		fireLayerRemoved(layer);
 	}
 	
 	public void clearLayers() {
 		synchronized (layers) {
 			layers.clear();
 		}
+		fireLayersCleared();
+	}
+	
+	public int getLayerDepth(final ILayer layer) {
+		synchronized (layers) {
+			return layers.indexOf(layer);
+		}
+	}
+	
+	public void setLayerDepth(final ILayer layer, final int depth) {
+		synchronized (layers) {
+			layers.remove(layer);
+			layers.add(depth%layers.size(), layer);
+		}
+		fireLayersChanged();
+		this.repaint();
 	}
 	
 	public void addListener(final IRendererListener listener) {
@@ -225,6 +253,38 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		synchronized (listeners) {
 			for(IRendererListener l: listeners) {
 				l.onZoomChanged(zoom);
+			}
+		}
+	}
+	
+	private void fireLayerAdded(final ILayer layer) {
+		synchronized (listeners) {
+			for(IRendererListener l: listeners) {
+				l.onLayerAdded(layer);
+			}
+		}
+	}
+	
+	private void fireLayerRemoved(final ILayer layer) {
+		synchronized (listeners) {
+			for(IRendererListener l: listeners) {
+				l.onLayerRemoved(layer);
+			}
+		}
+	}
+	
+	private void fireLayersCleared() {
+		synchronized (listeners) {
+			for(IRendererListener l: listeners) {
+				l.onLayersCleared();
+			}
+		}
+	}
+	
+	private void fireLayersChanged() {
+		synchronized (listeners) {
+			for(IRendererListener l: listeners) {
+				l.onLayersChanged();
 			}
 		}
 	}
@@ -338,7 +398,13 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 					(-getWorldY(mouseContextPos.y)));
 			world.addBorder(border);
 			this.repaint();
-		} else if(addBorderPointItem == src) {
+		} else if(newMapItem == src) {
+			final SimpleMap map = new SimpleMap();
+			map.setLongitude(world.toLongitude(getWorldX(mouseContextPos.x)));
+			map.setLatitude(world.toLatitude(getWorldY(mouseContextPos.y)));
+			world.addMap(map);
+			this.repaint();
+		}else if(addBorderPointItem == src) {
 			if(null == selectedBorder) return;
 			selectedBorder.addPoint(
 					(getWorldX(mouseContextPos.x)), 

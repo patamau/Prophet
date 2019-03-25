@@ -17,6 +17,7 @@ import prophet.gui.layers.GridLayer;
 import prophet.gui.layers.IconsLayer;
 import prophet.gui.layers.PolygonsLayer;
 import prophet.gui.widgets.BordersWidget;
+import prophet.gui.widgets.LayersWidget;
 import prophet.gui.widgets.MapsWidget;
 import prophet.gui.widgets.PositionWidget;
 import prophet.gui.widgets.TownsWidget;
@@ -138,6 +139,7 @@ public class Main {
 		gui.addWidget(new MapsWidget(prophet.getSetting()), ProphetGUI.COMPONENT_LEFT);
 		gui.addWidget(new TownsWidget(prophet.getSetting()), ProphetGUI.COMPONENT_LEFT);
 		gui.addWidget(new BordersWidget(prophet.getSetting(), prophet.getRenderer()), ProphetGUI.COMPONENT_RIGHT);
+		gui.addWidget(new LayersWidget(prophet.getRenderer()), ProphetGUI.COMPONENT_RIGHT);
 		gui.show();
 	}
 }

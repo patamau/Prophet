@@ -35,6 +35,7 @@ public class PictureLayer extends LayerBase {
 	}
 	
 	private void updateOffset(final Point2D offset) {
+		if(null == image) return;
 		final int x = (int)Math.round(offset.getX() - image.getWidth()*scale/2);
 		final int y = (int)Math.round(offset.getY() + image.getHeight()*scale/2);
 		imageOffset.setLocation(x, y) ;
@@ -42,6 +43,7 @@ public class PictureLayer extends LayerBase {
 
 	@Override
 	public void draw(final Graphics2D g) {
+		if(null == image) return;
 		final AffineTransform at = new AffineTransform();
 		final Point offset = renderer.getOffset();
 		final double zoom = renderer.getZoom() * scale;
