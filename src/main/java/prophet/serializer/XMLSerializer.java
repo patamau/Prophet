@@ -96,7 +96,7 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 			try {
 				ClassUtils.setFieldValue(object, aname, avalue);
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error("cannot set field ",aname," to ",avalue," in object ",object,": ",e);
 			}
 		}
 	}

@@ -229,7 +229,11 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	public void setLayerDepth(final ILayer layer, final int depth) {
 		synchronized (layers) {
 			layers.remove(layer);
-			layers.add(depth%layers.size(), layer);
+			if(depth==layers.size()) {
+				layers.add(layer);
+			} else {
+				layers.add(depth%layers.size(), layer);
+			}
 		}
 		fireLayersChanged();
 		this.repaint();
@@ -401,7 +405,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		} else if(newMapItem == src) {
 			final SimpleMap map = new SimpleMap();
 			map.setLongitude(world.toLongitude(getWorldX(mouseContextPos.x)));
-			map.setLatitude(world.toLatitude(getWorldY(mouseContextPos.y)));
+			map.setLatitude(world.toLatitude(-getWorldY(mouseContextPos.y)));
 			world.addMap(map);
 			this.repaint();
 		}else if(addBorderPointItem == src) {
