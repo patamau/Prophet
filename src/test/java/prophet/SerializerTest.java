@@ -3,6 +3,7 @@ package prophet;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import prophet.geom.Point2D;
 import prophet.model.IMap;
 import prophet.model.ISetting;
 import prophet.model.ITown;
@@ -48,4 +49,21 @@ class SerializerTest {
 		System.out.println(xml);
 	}
 
+	@Test
+	void point2Dtest() {
+		try {
+			Class<?> cl = Class.forName("prophet.geom.Point2D");
+			Point2D p = new Point2D();
+			Point2D p2 = (Point2D)cl.newInstance();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

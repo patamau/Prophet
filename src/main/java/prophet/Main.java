@@ -11,6 +11,7 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import prophet.geom.Point2D;
 import prophet.gui.ProphetGUI;
 import prophet.gui.layers.GraphLayer;
 import prophet.gui.layers.GridLayer;
@@ -125,10 +126,10 @@ public class Main {
 		prophet.getRenderer().addLayer(new GridLayer(prophet.getRenderer()));
 		//final PolygonsLayer pl = new PolygonsLayer(prophet.getRenderer());
 		final SimpleBorder border = new SimpleBorder();
-		border.addPoint(0, 0);
-		border.addPoint(20, 10);
-		border.addPoint(10, 15);
-		border.addPoint(0, 15);
+		border.addPoint(new Point2D(0, 0));
+		border.addPoint(new Point2D(20, 10));
+		border.addPoint(new Point2D(10, 15));
+		border.addPoint(new Point2D(0, 15));
 		//pl.addPolygon(border);
 		//prophet.getRenderer().addLayer(pl);
 		prophet.getSetting().getWorld().addBorder(border);

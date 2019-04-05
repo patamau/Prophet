@@ -4,9 +4,9 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
+import prophet.geom.Point2D;
 import prophet.gui.IRenderer;
 
 public class PictureLayer extends LayerBase {

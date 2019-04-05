@@ -1,7 +1,8 @@
 package prophet.model;
 
-import java.awt.geom.Point2D;
 import java.util.List;
+
+import prophet.geom.Point2D;
 
 public interface IPolygon {
 

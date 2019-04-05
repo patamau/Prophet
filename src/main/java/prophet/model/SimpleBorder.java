@@ -1,9 +1,10 @@
 package prophet.model;
 
-import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
+
+import prophet.geom.Point2D;
 
 public class SimpleBorder extends Observable implements IBorder {
 
@@ -38,7 +39,7 @@ public class SimpleBorder extends Observable implements IBorder {
 		} else {
 			// find point within the segment
 			final double rx = a.getX() + r * abx, ry = a.getY() + r * aby;
-			final Point2D rv = new Point2D.Double(rx, ry);
+			final Point2D rv = new Point2D(rx, ry);
 			return rv.distanceSq(x, y);
 		}
 	}
@@ -108,14 +109,6 @@ public class SimpleBorder extends Observable implements IBorder {
 			outPoints.addAll(points);
 		}
 	}
-
-	@Override
-	public void addPoint(double x, double y) {
-		synchronized (points) {
-			points.add(new Point2D.Double(x, y));
-		}
-		setChanged();
-	}
 	
 	@Override
 	public void removePoint(Point2D p) {
@@ -142,11 +135,19 @@ public class SimpleBorder extends Observable implements IBorder {
 		}
 		setChanged();
 	}
+	
+	@Override
+	public void addPoint(final Point2D p) {
+		synchronized (points) {
+			points.add(p);
+		}
+		setChanged();
+	}
 
 	@Override
-	public void addPoint(int idx, double x, double y) {
+	public void insertPoint(final int idx, final Point2D p) {
 		synchronized (points) {
-			points.add(idx, new Point2D.Double(x, y));
+			points.add(idx, p);
 		}
 		setChanged();
 	}
@@ -180,7 +181,7 @@ public class SimpleBorder extends Observable implements IBorder {
 				if(y>maxy) maxy = y;
 			}
 		}
-		return new Point2D.Double(minx+(maxx-minx)*0.5, miny+(maxy-miny)*0.5);
+		return new Point2D(minx+(maxx-minx)*0.5, miny+(maxy-miny)*0.5);
 	}
 
 	@Override

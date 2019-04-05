@@ -1,6 +1,7 @@
 package prophet.model;
 
-import java.awt.geom.Point2D;
+import prophet.geom.Point2D;
+
 import java.util.List;
 
 public interface IWorld {

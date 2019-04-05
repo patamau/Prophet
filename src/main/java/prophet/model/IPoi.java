@@ -1,6 +1,6 @@
 package prophet.model;
 
-import java.awt.geom.Point2D;
+import prophet.geom.Point2D;
 
 public interface IPoi  extends IObservable {
 

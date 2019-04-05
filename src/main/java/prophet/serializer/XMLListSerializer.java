@@ -67,7 +67,7 @@ public class XMLListSerializer extends XMLSerializer<List> {
 		for(int i=0; i<nlen; ++i) {
 			try {
 				Node n = children.item(i);
-				String classValue = n.getNodeName();
+				String classValue = decodeXml(n.getNodeName());
 				Class<?> classType = Class.forName(classValue);
 				Object cobject = classType.newInstance();
 				ISerializer<?> classSerializer = getSerializer(classType);

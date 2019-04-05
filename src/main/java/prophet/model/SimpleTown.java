@@ -1,7 +1,8 @@
 package prophet.model;
 
-import java.awt.geom.Point2D;
 import java.util.Observable;
+
+import prophet.geom.Point2D;
 
 public class SimpleTown extends Observable implements ITown {
 	
@@ -15,7 +16,7 @@ public class SimpleTown extends Observable implements ITown {
 	
 	public SimpleTown() {
 		name = "Town";
-		position = new Point2D.Double();
+		position = new Point2D();
 	}
 	
 	@Override
@@ -87,6 +88,6 @@ public class SimpleTown extends Observable implements ITown {
 	public void updateWorldPosition(final IWorld world) {
 		final double x = world.fromLongitude(longitude);
 		final double y = world.fromLatitude(latitude);
-		position.setLocation(x, y);
+		position.set(x, y);
 	}
 }

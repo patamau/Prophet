@@ -1,6 +1,7 @@
 package prophet.model;
 
-import java.awt.geom.Point2D;
+import prophet.geom.Point2D;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -332,12 +333,12 @@ public class SimpleWorld implements IWorld, Observer {
 	
 	@Override
 	public Point2D toPolar(final Point2D p) {
-		return new Point2D.Double(toLongitude(p.getX()), toLatitude(p.getY()));
+		return new Point2D(toLongitude(p.getX()), toLatitude(p.getY()));
 	}
 	
 	@Override
 	public Point2D toCartesian(final Point2D p) {
-		return new Point2D.Double(fromLongitude(p.getX()), fromLatitude(p.getY()));
+		return new Point2D(fromLongitude(p.getX()), fromLatitude(p.getY()));
 	}
 
 	@Override

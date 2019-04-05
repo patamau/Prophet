@@ -4,10 +4,10 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import prophet.geom.Point2D;
 import prophet.gui.IRenderer;
 import prophet.model.IPoi;
 import prophet.util.Logger;

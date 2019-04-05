@@ -25,7 +25,7 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 	
 	private void serializeAttributes(final Object object, final StringBuilder builder) {
 		builder.append(" class=\"");
-		builder.append(object.getClass().getName());
+		builder.append(object.getClass().getCanonicalName());
 		builder.append('"');
 		
 		for (Field f : ClassUtils.getFields(object.getClass())) {
@@ -156,5 +156,13 @@ public class XMLSerializer<T> extends SerializerBase<T> {
 		Document document = builder.parse(input);
 		Element root = document.getDocumentElement();
 		parse(root, object, parent);
+	}
+	
+	protected String escapeXml(final String str) {
+		return str.replace("$", "_24_");
+	}
+	
+	protected String decodeXml(final String str) {
+		return str.replace("_24_", "$");
 	}
 }

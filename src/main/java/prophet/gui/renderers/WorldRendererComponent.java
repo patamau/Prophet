@@ -14,7 +14,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +26,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
+import prophet.geom.Point2D;
 import prophet.gui.ILayer;
 import prophet.gui.IRenderer;
 import prophet.model.IBorder;
@@ -397,9 +397,10 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 			this.repaint();
 		} else if(newBorderItem == src) {
 			final SimpleBorder border = new SimpleBorder();
-			border.addPoint(
+			final Point2D p = new Point2D(
 					(getWorldX(mouseContextPos.x)), 
 					(-getWorldY(mouseContextPos.y)));
+			border.addPoint(p);
 			world.addBorder(border);
 			this.repaint();
 		} else if(newMapItem == src) {
@@ -410,9 +411,10 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 			this.repaint();
 		}else if(addBorderPointItem == src) {
 			if(null == selectedBorder) return;
-			selectedBorder.addPoint(
+			final Point2D p = new Point2D(
 					(getWorldX(mouseContextPos.x)), 
 					(-getWorldY(mouseContextPos.y)));
+			selectedBorder.addPoint(p);
 			this.repaint();
 		} else if(insertBorderPointItem == src) {
 			if(null == selectedBorder) return;
@@ -420,7 +422,8 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 			final double y = -getWorldY(mouseContextPos.y);
 			final int i = selectedBorder.getNearestSegment(x, y);
 			if(i >= 0) {
-				selectedBorder.addPoint(i, x, y);
+				final Point2D p = new Point2D(x, y);
+				selectedBorder.insertPoint(i, p);
 			} else {
 				logger.warning("no reference point found on border ",selectedBorder);
 			}

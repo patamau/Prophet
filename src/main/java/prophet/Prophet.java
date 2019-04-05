@@ -1,10 +1,10 @@
 package prophet;
 
-import java.awt.geom.Point2D;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
+import prophet.geom.Point2D;
 import prophet.gui.ILayer;
 import prophet.gui.layers.IconsLayer;
 import prophet.gui.layers.PictureLayer;
@@ -79,7 +79,7 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	public void onMapAdded(final IMap map) {
 		if(mapLayers.containsKey(map)) return;
 		logger.info("Map added: ",map.getPicturePath());
-		final Point2D offset = setting.getWorld().toCartesian(new Point2D.Double(map.getLongitude(), map.getLatitude()));
+		final Point2D offset = setting.getWorld().toCartesian(new Point2D(map.getLongitude(), map.getLatitude()));
 		final PictureLayer layer = new PictureLayer(renderer, map.getPicture(), map.getScale(), offset);
 		mapLayers.put(map, layer);
 		renderer.addLayer(layer);
@@ -90,7 +90,7 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 		logger.debug("Map changed");
 		final PictureLayer layer = mapLayers.get(map);
 		if(null != layer) {
-			final Point2D offset = setting.getWorld().toCartesian(new Point2D.Double(map.getLongitude(), map.getLatitude()));
+			final Point2D offset = setting.getWorld().toCartesian(new Point2D(map.getLongitude(), map.getLatitude()));
 			layer.set(map.getPicture(), offset, map.getScale());
 			renderer.repaint();
 		}
@@ -114,7 +114,7 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 
 	@Override
 	public void onTownAdded(final ITown town) {
-		final Point2D p = setting.getWorld().toCartesian(new Point2D.Double(town.getLongitude(), town.getLatitude()));
+		final Point2D p = setting.getWorld().toCartesian(new Point2D(town.getLongitude(), town.getLatitude()));
 		logger.debug("Town added at ", p, " (",town.getLongitude(),",",town.getLatitude(),")");
 		townsLayer.addPoint(town);
 	}
