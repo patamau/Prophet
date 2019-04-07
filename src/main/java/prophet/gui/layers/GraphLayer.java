@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import prophet.gui.IRenderer;
+import prophet.util.Language;
 
 public class GraphLayer extends LayerBase {
 
@@ -20,7 +21,8 @@ public class GraphLayer extends LayerBase {
 	private final List<Point> points;
 	private final Map<Point, List<Point>> pointMap;
 	
-	public GraphLayer(final IRenderer renderer) {
+	public GraphLayer(final String name, final IRenderer renderer) {
+		super(name);
 		this.renderer = renderer;
 		this.points = new ArrayList<Point>();
 		this.pointMap = new HashMap<Point, List<Point>>();

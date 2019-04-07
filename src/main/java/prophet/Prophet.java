@@ -19,6 +19,7 @@ import prophet.model.SimpleSetting;
 import prophet.serializer.ISerializer;
 import prophet.serializer.XMLSettingSerializer;
 import prophet.util.Configuration;
+import prophet.util.Language;
 import prophet.util.Logger;
 import prophet.util.Resources;
 
@@ -50,8 +51,8 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 		mapLayers = new HashMap<IMap, PictureLayer>();
 		setting = new SimpleSetting();
 		renderer = new WorldRendererComponent(setting.getWorld());
-		townsLayer = new IconsLayer(renderer);
-		bordersLayer = new PolygonsLayer(renderer);
+		townsLayer = new IconsLayer("Towns", renderer);
+		bordersLayer = new PolygonsLayer("Borders", renderer);
 		setting.getWorld().addWorldListener(this);
 		serializer = new XMLSettingSerializer();
 	}
@@ -80,7 +81,7 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 		if(mapLayers.containsKey(map)) return;
 		logger.info("Map added: ",map.getPicturePath());
 		final Point2D offset = setting.getWorld().toCartesian(new Point2D(map.getLongitude(), map.getLatitude()));
-		final PictureLayer layer = new PictureLayer(renderer, map.getPicture(), map.getScale(), offset);
+		final PictureLayer layer = new PictureLayer(map.getPicturePath(), renderer, map.getPicture(), map.getScale(), offset);
 		mapLayers.put(map, layer);
 		renderer.addLayer(layer);
 	}
@@ -92,6 +93,7 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 		if(null != layer) {
 			final Point2D offset = setting.getWorld().toCartesian(new Point2D(map.getLongitude(), map.getLatitude()));
 			layer.set(map.getPicture(), offset, map.getScale());
+			layer.setName(map.getPicturePath());
 			renderer.repaint();
 		}
 	}

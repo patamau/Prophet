@@ -113,18 +113,21 @@ public class LayersWidget extends WidgetBase implements IRendererListener, ListS
 
 	@Override
 	public void onLayerAdded(final ILayer layer) {
-		logger.debug("layer ",layer," added");
 		layersListModel.addElement(layer);
+		layersList.invalidate();
+		layersList.repaint();
 	}
 
 	@Override
 	public void onLayerRemoved(final ILayer layer) {
 		layersListModel.removeElement(layer);
+		layersList.invalidate();
 	}
 
 	@Override
 	public void onLayersCleared() {
 		layersListModel.removeAllElements();
+		layersList.invalidate();
 	}
 	
 	@Override

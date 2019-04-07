@@ -19,8 +19,9 @@ public class PictureLayer extends LayerBase {
 	private final Point imageOffset;
 	
 	
-	public PictureLayer(final IRenderer renderer, final BufferedImage image, final double scale, final Point2D offset)
+	public PictureLayer(final String name, final IRenderer renderer, final BufferedImage image, final double scale, final Point2D offset)
 	{
+		super(name);
 		this.image = image;
 		this.renderer = renderer;
 		this.scale = scale;

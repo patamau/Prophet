@@ -122,7 +122,7 @@ public class Main {
 		//map2.setPicturePath("/map-full.jpg");
 		//map2.setScale(world.getCirconference()/map2.getPicture().getWidth());
 		//prophet.getSetting().getWorld().addMap(map2);
-		prophet.getRenderer().addLayer(new GraphLayer(prophet.getRenderer()));
+		prophet.getRenderer().addLayer(new GraphLayer("Streets", prophet.getRenderer()));
 		prophet.getRenderer().addLayer(new GridLayer(prophet.getRenderer()));
 		//final PolygonsLayer pl = new PolygonsLayer(prophet.getRenderer());
 		final SimpleBorder border = new SimpleBorder();

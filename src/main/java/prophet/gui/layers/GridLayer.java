@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import prophet.gui.IRenderer;
+import prophet.util.Language;
 
 public class GridLayer extends LayerBase {
 	
@@ -14,6 +15,7 @@ public class GridLayer extends LayerBase {
 	
 	public GridLayer(final IRenderer renderer)
 	{
+		super(Language.string("Grid"));
 		this.renderer = renderer;
 	}
 	
@@ -69,5 +71,4 @@ public class GridLayer extends LayerBase {
 
 		drawGrid(g, computeOptimalGridStep());
 	}
-
 }

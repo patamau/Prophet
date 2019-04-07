@@ -21,7 +21,8 @@ public class IconsLayer extends LayerBase {
 	private Image icon;
 	private double scale;
 	
-	public IconsLayer (final IRenderer renderer) {
+	public IconsLayer (final String name, final IRenderer renderer) {
+		super(name);
 		points = new ArrayList<IPoi>();
 		this.renderer = renderer;
 		this.scale = 1d;

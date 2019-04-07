@@ -19,7 +19,8 @@ public class PolygonsLayer extends LayerBase {
 	private final List<IPolygon> polygons;
 	private transient final List<Point2D> points; //temporary list
 	
-	public PolygonsLayer(final IRenderer renderer) {
+	public PolygonsLayer(final String name, final IRenderer renderer) {
+		super(name);
 		this.renderer = renderer;
 		this.polygons = new ArrayList<IPolygon>();
 		//temporary list of points

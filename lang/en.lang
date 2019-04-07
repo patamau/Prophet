@@ -1,18 +1,19 @@
 #English en - v.0.3
-#Mon Mar 25 11:28:00 CET 2019
+#Fri Apr 05 22:42:20 CEST 2019
 Down=Down
 Configuration=Configuration
 Position=Position
 Reset=Reset
+Grid=Grid
 Open\ Setting...=Open Setting...
 Save\ Setting...=Save Setting...
 Options...=Options...
 Up=Up
 Reset\ entries\ to\ their\ original\ value=Reset entries to their original value
 Remove=Remove
-Remove\ the\ currently\ selected\ entry=Remove the currently selected entry
 Quit=Quit
-Discard\ changes\ and\ exit=Discard changes and exit
+Remove\ the\ currently\ selected\ entry=Remove the currently selected entry
 Apply\ and\ save\ the\ configuration\ to\ file=Apply and save the configuration to file
+Discard\ changes\ and\ exit=Discard changes and exit
 Cancel=Cancel
 Save=Save

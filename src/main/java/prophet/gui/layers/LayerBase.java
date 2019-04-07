@@ -3,13 +3,26 @@ package prophet.gui.layers;
 import java.util.Observer;
 
 import prophet.gui.ILayer;
+import prophet.util.Logger;
 
 public abstract class LayerBase implements ILayer {
+	
+	private static final Logger logger = Logger.getLogger(LayerBase.class);
 
 	protected boolean enabled;
+	private String name;
 	
-	protected LayerBase() {
+	protected LayerBase(final String name) {
+		this.name = name;
 		this.enabled = true;
+	}
+	
+	public void setName(final String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	public void setEnabled(final boolean enabled) {
@@ -34,8 +47,7 @@ public abstract class LayerBase implements ILayer {
 
 	@Override
 	public void addObserver(Observer observer) {
-		// TODO Auto-generated method stub
-		
+		logger.debug("adding observer",observer);
 	}
 
 	@Override
@@ -48,5 +60,10 @@ public abstract class LayerBase implements ILayer {
 	public void deleteObservers() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public String toString() {
+		return null!=name&&name.length()>0?name:getClass().getSimpleName();
 	}
 }
