@@ -95,5 +95,10 @@ public class SimpleMap extends Observable implements IMap {
 		updateSize();
 		setChanged();
 	}
+	
+	@Override
+	public String toString() {
+		return  picturePath!=null && picturePath.length()>0 ? picturePath : super.toString();
+	}
 
 }

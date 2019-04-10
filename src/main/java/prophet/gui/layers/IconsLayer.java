@@ -1,5 +1,6 @@
 package prophet.gui.layers;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
@@ -64,6 +65,11 @@ public class IconsLayer extends LayerBase {
 				final double y = offset.getY()+(p.getY()*renderer.getZoom())-((double)icon.getHeight(null)*zoom)/2d;
 				at.translate(x, y);
 				at.scale(zoom, zoom);
+				if(renderer.isSelected(poi)) {
+					g.setColor(Color.MAGENTA);
+				} else {
+					g.setColor(Color.BLACK);
+				}
 				g.drawImage(icon, at, null);
 				g.drawString(poi.getName(), (float)x, (float)y);
 			}

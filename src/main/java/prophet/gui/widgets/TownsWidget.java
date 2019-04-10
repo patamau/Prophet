@@ -25,9 +25,11 @@ import javax.swing.event.ListSelectionListener;
 
 import prophet.gui.KeyValueTableModel;
 import prophet.model.IBorder;
+import prophet.model.IBorderSelectionManager;
 import prophet.model.IMap;
 import prophet.model.ISetting;
 import prophet.model.ITown;
+import prophet.model.ITownSelectionManager;
 import prophet.model.IWorldListener;
 import prophet.util.Language;
 import prophet.util.Logger;
@@ -45,10 +47,12 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 	private final JTable townTable;
 	private final JPopupMenu contextMenu;
 	private final JMenuItem removeTownItem;
+	private final ITownSelectionManager selectionManager;
 	
-	public TownsWidget(final ISetting setting) {
+	public TownsWidget(final ISetting setting, final ITownSelectionManager selectionManager) {
 		super(WTITLE);
 		this.setting = setting;
+		this.selectionManager = selectionManager;
 		townsListModel = new DefaultListModel<ITown>();
 		townTableModel = new KeyValueTableModel();
 		
@@ -152,6 +156,7 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 				townTableModel.setObject(town);
 				townsList.invalidate();
 				townsList.repaint();
+				selectionManager.onTownSelected(town);
 			}
 		}
 	}
@@ -166,6 +171,7 @@ public class TownsWidget extends WidgetBase implements IWorldListener, ListSelec
 			if(null == town) return;
 			logger.debug("selected item is ",town);
 			contextMenu.show(townsList, e.getX(), e.getY());
+			selectionManager.onTownSelected(town);
 		}
 	}
 

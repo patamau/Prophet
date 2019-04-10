@@ -78,7 +78,8 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		listeners = new HashSet<IRendererListener>();
 		normalCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
 		dragCursor = new Cursor(Cursor.HAND_CURSOR);
-		mousePressedPos = mouseContextPos = new Point(-1,-1);
+		mousePressedPos = new Point(-1, -1);
+		mouseContextPos = new Point(-1,-1);
 		currentSize = new Dimension(getWidth(), getHeight());
 		offset = new Point();
 		zoom = 1d;
@@ -446,6 +447,8 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	public void onTownSelected(final ITown town) {
 		if(selectedTown == town) return;
 		selectedTown = town;
+		selectedBorder = null;
+		this.repaint();
 	}
 	
 	@Override
@@ -457,6 +460,8 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	public void onBorderSelected(final IBorder border) {
 		if(selectedBorder == border) return;
 		selectedBorder = border;
+		selectedTown = null;
+		this.repaint();
 	}
 	
 	@Override
@@ -464,4 +469,11 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		return selectedBorder;
 	}
 	
+	@Override
+	public boolean isSelected(Object object) {
+		if (null == object) return false;
+		return
+				object == selectedTown ||
+				object == selectedBorder;
+	}
 }

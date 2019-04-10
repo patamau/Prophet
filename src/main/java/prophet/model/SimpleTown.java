@@ -90,4 +90,9 @@ public class SimpleTown extends Observable implements ITown {
 		final double y = world.fromLatitude(latitude);
 		position.set(x, y);
 	}
+	
+	@Override
+	public String toString() {
+		return name != null && name.length() > 0 ? name : super.toString();
+	}
 }

@@ -188,4 +188,9 @@ public class SimpleBorder extends Observable implements IBorder {
 	public int size() {
 		return points.size();
 	}
+
+	@Override
+	public String toString() {
+		return  name!=null && name.length()>0 ? name : super.toString();
+	}
 }

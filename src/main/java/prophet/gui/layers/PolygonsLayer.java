@@ -32,6 +32,11 @@ public class PolygonsLayer extends LayerBase {
 		synchronized(polygons) {
 			for(final IPolygon poly : polygons)
 			{
+				if(renderer.isSelected(poly)) {
+					g.setColor(Color.MAGENTA);
+				} else {
+					g.setColor(Color.DARK_GRAY);
+				}
 				poly.getPoints(points);
 				if(points.size()==0) continue;
 				prev = points.get(points.size()-1);
