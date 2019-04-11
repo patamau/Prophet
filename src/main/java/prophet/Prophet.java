@@ -6,6 +6,7 @@ import java.util.Map;
 
 import prophet.geom.Point2D;
 import prophet.gui.ILayer;
+import prophet.gui.layers.GridLayer;
 import prophet.gui.layers.IconsLayer;
 import prophet.gui.layers.PictureLayer;
 import prophet.gui.layers.PolygonsLayer;
@@ -45,6 +46,7 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	private final Map<IMap, PictureLayer> mapLayers;
 	private final IconsLayer townsLayer;
 	private final PolygonsLayer bordersLayer;
+	private final GridLayer gridLayer;
 	
 	public Prophet() {
 		mapLayers = new HashMap<IMap, PictureLayer>();
@@ -52,6 +54,7 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 		renderer = new WorldRendererComponent(setting.getWorld());
 		townsLayer = new IconsLayer("Towns", renderer);
 		bordersLayer = new PolygonsLayer("Borders", renderer);
+		gridLayer = new GridLayer(renderer);
 		setting.getWorld().addWorldListener(this);
 		serializer = new XMLSettingSerializer();
 	}
@@ -61,6 +64,7 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 		townsLayer.setIcon(Resources.getImage(townIconUrl));
 		renderer.addLayer(bordersLayer);
 		renderer.addLayer(townsLayer);
+		renderer.addLayer(gridLayer);
 	}
 	
 	public ISerializer<ISetting> getSettingSerializer() {

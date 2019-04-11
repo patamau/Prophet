@@ -15,15 +15,21 @@ public abstract class FloatingWidgetBase extends JDialog implements IWidget {
 		super(parent, title, false);
 		enabled = true;
 	}
-	
+
 	@Override
 	public void setEnabled(final boolean enabled) {
 		this.enabled = enabled;
 	}
-	
+
 	@Override
 	public boolean isEnabled() {
 		return enabled;
+	}
+
+	@Override
+	public void setVisible(boolean b) {
+		pack();
+		super.setVisible(b);
 	}
 
 }

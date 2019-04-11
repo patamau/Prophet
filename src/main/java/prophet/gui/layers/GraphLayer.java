@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import prophet.gui.IRenderer;
-import prophet.util.Language;
 
 public class GraphLayer extends LayerBase {
 

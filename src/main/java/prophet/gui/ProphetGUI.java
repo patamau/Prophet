@@ -4,16 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +27,6 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
 import prophet.Prophet;
-import prophet.gui.widgets.DefaultFloatingWidget;
 import prophet.gui.widgets.FloatingWidgetBase;
 import prophet.gui.widgets.ToolBarWidgetBase;
 import prophet.model.ISetting;
@@ -44,13 +39,13 @@ public class ProphetGUI implements ActionListener {
 	
 	private static final Logger logger = Logger.getLogger(ProphetGUI.class);
 	
-	public static final int LEFTPANEL_SIZE_PREF = 20, RIGHTPANEL_SIZE_PREF = 20, BOTTOMPANEL_SIZE_PREF = 20;
-	public static final int COMPONENT_LEFT = 0, COMPONENT_RIGHT = 1, COMPONENT_BOTTOM = 2;
+	public static final int TOPPANEL_SIZE_PREF = 20, BOTTOMPANEL_SIZE_PREF = 20;
+	public static final int COMPONENT_TOP = 0, COMPONENT_BOTTOM = 1;
 	
 	private final Prophet prophet;
 	private JFrame frame;
 	
-	private JComponent leftComponent, rightComponent, bottomComponent;
+	private JComponent topComponent, bottomComponent;
 	private JMenuItem openItem, saveItem, configItem, exitItem;
 	
 	private final JMenu widgetsMenu;
@@ -78,11 +73,8 @@ public class ProphetGUI implements ActionListener {
 		case COMPONENT_BOTTOM:
 			bottomComponent.add(widget);
 			break;
-		case COMPONENT_LEFT:
-			leftComponent.add(widget);
-			break;
-		case COMPONENT_RIGHT:
-			rightComponent.add(widget);
+		case COMPONENT_TOP:
+			topComponent.add(widget);
 			break;
 		default:
 			logger.error("Adding widget ",widget.getName()," to unsupported component ",component);
@@ -125,38 +117,16 @@ public class ProphetGUI implements ActionListener {
 		frame.setJMenuBar(menubar);
 	}
 	
-	private JComponent createLeftPanel() {
-		leftComponent = new JPanel();
-		leftComponent.setPreferredSize(new Dimension(LEFTPANEL_SIZE_PREF, 0));
-		return leftComponent;
-	}
-	
-	private JComponent createCentralPanel() {
-		final JSplitPane centralPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		centralPane.setOneTouchExpandable(true);
-		centralPane.setResizeWeight(1.0);
-		centralPane.setDividerSize(12);
-		centralPane.setLeftComponent(prophet.getRenderer());
-		centralPane.setRightComponent(createRightPanel());
-		final JSplitPane middlePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		middlePane.setOneTouchExpandable(true);
-		middlePane.setResizeWeight(0.0);
-		middlePane.setDividerSize(12);
-		middlePane.setRightComponent(centralPane);
-		middlePane.setLeftComponent(createLeftPanel());
-		return middlePane;
-	}
-	
-	private JComponent createRightPanel() {
-		rightComponent = new JPanel();
-		rightComponent.setPreferredSize(new Dimension(RIGHTPANEL_SIZE_PREF, 0));
-		return rightComponent;
-	}
-	
 	private JComponent createBottomPanel() {
 		bottomComponent = new JPanel(new BorderLayout());
 		bottomComponent.setPreferredSize(new Dimension(0, BOTTOMPANEL_SIZE_PREF));
 		return bottomComponent;
+	}
+	
+	private JComponent createTopPanel() {
+		topComponent = new JPanel();
+		topComponent.setPreferredSize(new Dimension(0, TOPPANEL_SIZE_PREF));
+		return topComponent;
 	}
 	
 	private void createGUI() {
@@ -165,7 +135,8 @@ public class ProphetGUI implements ActionListener {
 		frame.setLayout(new BorderLayout());
 		
 		createMenubar();
-		frame.add(createCentralPanel(), BorderLayout.CENTER);
+		frame.add(createTopPanel(), BorderLayout.NORTH);
+		frame.add(prophet.getRenderer(), BorderLayout.CENTER);
 		frame.add(createBottomPanel(), BorderLayout.SOUTH);
 		
 		frame.setSize(800, 500); //TODO: load from configuration or adapt to content

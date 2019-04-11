@@ -9,17 +9,15 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import prophet.geom.Point2D;
 import prophet.gui.ProphetGUI;
-import prophet.gui.layers.GraphLayer;
-import prophet.gui.layers.GridLayer;
+import prophet.gui.widgets.BordersFloatingWidget;
 import prophet.gui.widgets.BordersWidget;
-import prophet.gui.widgets.DefaultFloatingWidget;
+import prophet.gui.widgets.LayersFloatingWidget;
 import prophet.gui.widgets.LayersWidget;
-import prophet.gui.widgets.MapsWidget;
+import prophet.gui.widgets.MapsFloatingWidget;
 import prophet.gui.widgets.PositionWidget;
+import prophet.gui.widgets.TownsFloatingWidget;
 import prophet.gui.widgets.TownsWidget;
-import prophet.model.SimpleBorder;
 import prophet.util.Configuration;
 import prophet.util.Logger;
 import prophet.util.Options;
@@ -101,41 +99,18 @@ public class Main {
 		});
 		
 		prophet.initialize();
-
-		//temporary shit ----
-		/*
-		final IWorld world = prophet.getSetting().getWorld();
-		final IMap map = new SimpleMap();
-		map.setPicturePath("maps/earth3.jpg");
-		map.setScale(world.getCirconference()/map.getPicture().getWidth());
-		prophet.getSetting().getWorld().addMap(map);
-		*/
-
-		//final IMap map2 = new SimpleMap();
-		//map2.setPicturePath("/map-full.jpg");
-		//map2.setScale(world.getCirconference()/map2.getPicture().getWidth());
-		//prophet.getSetting().getWorld().addMap(map2);
-		prophet.getRenderer().addLayer(new GraphLayer("Streets", prophet.getRenderer()));
-		prophet.getRenderer().addLayer(new GridLayer(prophet.getRenderer()));
-		//final PolygonsLayer pl = new PolygonsLayer(prophet.getRenderer());
-		final SimpleBorder border = new SimpleBorder();
-		border.addPoint(new Point2D(0, 0));
-		border.addPoint(new Point2D(20, 10));
-		border.addPoint(new Point2D(10, 15));
-		border.addPoint(new Point2D(0, 15));
-		//pl.addPolygon(border);
-		//prophet.getRenderer().addLayer(pl);
-		prophet.getSetting().getWorld().addBorder(border);
-		//---  ----
 		
 		final ProphetGUI gui = new ProphetGUI(prophet);
 		gui.addWidget(new PositionWidget(prophet.getRenderer(), prophet.getSetting().getWorld()), ProphetGUI.COMPONENT_BOTTOM);
-		gui.addWidget(new MapsWidget(prophet.getSetting()), ProphetGUI.COMPONENT_LEFT);
-		gui.addWidget(new TownsWidget(prophet.getSetting(), prophet.getRenderer()), ProphetGUI.COMPONENT_LEFT);
-		gui.addWidget(new BordersWidget(prophet.getSetting(), prophet.getRenderer()), ProphetGUI.COMPONENT_RIGHT);
-		gui.addWidget(new LayersWidget(prophet.getRenderer()), ProphetGUI.COMPONENT_RIGHT);
+		//gui.addWidget(new MapsWidget(prophet.getSetting()), ProphetGUI.COMPONENT_LEFT);
+		//gui.addWidget(new TownsWidget(prophet.getSetting(), prophet.getRenderer()), ProphetGUI.COMPONENT_LEFT);
+		//gui.addWidget(new BordersWidget(prophet.getSetting(), prophet.getRenderer()), ProphetGUI.COMPONENT_RIGHT);
+		//gui.addWidget(new LayersWidget(prophet.getRenderer()), ProphetGUI.COMPONENT_RIGHT);
 		
-		gui.addWidget(new DefaultFloatingWidget("Float my ass away", gui.getFrame()));
+		gui.addWidget(new MapsFloatingWidget(prophet.getSetting(), gui.getFrame()));
+		gui.addWidget(new TownsFloatingWidget(prophet.getSetting(), prophet.getRenderer(), gui.getFrame()));
+		gui.addWidget(new BordersFloatingWidget(prophet.getSetting(), prophet.getRenderer(), gui.getFrame()));
+		gui.addWidget(new LayersFloatingWidget(prophet.getRenderer(), gui.getFrame()));
 		gui.show();
 	}
 }

@@ -48,7 +48,7 @@ public class PositionWidget extends ToolBarWidgetBase implements IRendererListen
 	@Override
 	public void onMouseMoved(final Point point) {
 		final double wx = renderer.getWorldX(point.x);
-		final double wy = renderer.getWorldY(point.y);
+		final double wy = -renderer.getWorldY(point.y);
 		positionLabel.setText(String.format("%.0f, %.0f", wx, wy));
 		positionLabel.invalidate();
 		final double px = world.toLongitude(wx);
