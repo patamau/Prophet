@@ -13,7 +13,7 @@ import prophet.model.IWorld;
 import prophet.util.Language;
 
 @SuppressWarnings("serial")
-public class PositionWidget extends WidgetBase implements IRendererListener {
+public class PositionWidget extends ToolBarWidgetBase implements IRendererListener {
 	
 	public static final String WTITLE = "Position";
 	

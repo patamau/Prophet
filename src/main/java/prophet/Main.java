@@ -1,7 +1,5 @@
 package prophet;
 
-import java.awt.BorderLayout;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,21 +13,16 @@ import prophet.geom.Point2D;
 import prophet.gui.ProphetGUI;
 import prophet.gui.layers.GraphLayer;
 import prophet.gui.layers.GridLayer;
-import prophet.gui.layers.IconsLayer;
-import prophet.gui.layers.PolygonsLayer;
 import prophet.gui.widgets.BordersWidget;
+import prophet.gui.widgets.DefaultFloatingWidget;
 import prophet.gui.widgets.LayersWidget;
 import prophet.gui.widgets.MapsWidget;
 import prophet.gui.widgets.PositionWidget;
 import prophet.gui.widgets.TownsWidget;
-import prophet.model.IMap;
-import prophet.model.IWorld;
 import prophet.model.SimpleBorder;
-import prophet.model.SimpleMap;
 import prophet.util.Configuration;
 import prophet.util.Logger;
 import prophet.util.Options;
-import prophet.util.Resources;
 
 public class Main {
 	
@@ -141,6 +134,8 @@ public class Main {
 		gui.addWidget(new TownsWidget(prophet.getSetting(), prophet.getRenderer()), ProphetGUI.COMPONENT_LEFT);
 		gui.addWidget(new BordersWidget(prophet.getSetting(), prophet.getRenderer()), ProphetGUI.COMPONENT_RIGHT);
 		gui.addWidget(new LayersWidget(prophet.getRenderer()), ProphetGUI.COMPONENT_RIGHT);
+		
+		gui.addWidget(new DefaultFloatingWidget("Float my ass away", gui.getFrame()));
 		gui.show();
 	}
 }

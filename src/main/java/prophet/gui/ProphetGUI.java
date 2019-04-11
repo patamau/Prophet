@@ -4,13 +4,20 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -24,7 +31,9 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
 import prophet.Prophet;
-import prophet.gui.widgets.WidgetBase;
+import prophet.gui.widgets.DefaultFloatingWidget;
+import prophet.gui.widgets.FloatingWidgetBase;
+import prophet.gui.widgets.ToolBarWidgetBase;
 import prophet.model.ISetting;
 import prophet.util.Configuration;
 import prophet.util.ConfigurationDialog;
@@ -44,10 +53,19 @@ public class ProphetGUI implements ActionListener {
 	private JComponent leftComponent, rightComponent, bottomComponent;
 	private JMenuItem openItem, saveItem, configItem, exitItem;
 	
+	private final JMenu widgetsMenu;
+	private final Map<JCheckBoxMenuItem, FloatingWidgetBase> floatingWidgets;
+	
 	public ProphetGUI(final Prophet prophet) {
 		this.prophet = prophet;
+		floatingWidgets = new HashMap<JCheckBoxMenuItem, FloatingWidgetBase>();
+		widgetsMenu = new JMenu("Widgets");
 		
 		createGUI();
+	}
+	
+	public JFrame getFrame() {
+		return frame;
 	}
 	
 	/**
@@ -55,7 +73,7 @@ public class ProphetGUI implements ActionListener {
 	 * @param widget
 	 * @param location COMPONENT_ flag where the widget will be (initially) placed
 	 */
-	public void addWidget(final WidgetBase widget, final int component) {
+	public void addWidget(final ToolBarWidgetBase widget, final int component) {
 		switch(component) {
 		case COMPONENT_BOTTOM:
 			bottomComponent.add(widget);
@@ -72,10 +90,19 @@ public class ProphetGUI implements ActionListener {
 		}
 	}
 	
+	public void addWidget(final FloatingWidgetBase widget) {
+		final JCheckBoxMenuItem wcmi = new JCheckBoxMenuItem(widget.getTitle());
+		wcmi.addActionListener(this);
+		widget.addWindowListener(new WidgetMenuListener(wcmi, widgetsMenu));
+		widget.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		widgetsMenu.add(wcmi);
+		floatingWidgets.put(wcmi, widget);
+	}
+	
 	private void createMenubar() {
 		//create menu bar
 		final JMenuBar menubar = new JMenuBar();
-		final JMenu fileMenu = new JMenu("File");		
+		final JMenu fileMenu = new JMenu("File");
 		
 		openItem = new JMenuItem(Language.string("Open Setting..."));
 		openItem.addActionListener(this);
@@ -92,7 +119,9 @@ public class ProphetGUI implements ActionListener {
 		fileMenu.add(configItem);
 		fileMenu.add(new JSeparator());
 		fileMenu.add(exitItem);
+		
 		menubar.add(fileMenu);
+		menubar.add(widgetsMenu);
 		frame.setJMenuBar(menubar);
 	}
 	
@@ -213,7 +242,7 @@ public class ProphetGUI implements ActionListener {
 			Configuration.setGlobalConfiguration(c);
 		}
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		final Object src = e.getSource();
@@ -223,8 +252,17 @@ public class ProphetGUI implements ActionListener {
 			saveSetting();
 		} else if(src == configItem) {
 			editConfiguration();
-		}else if(src == exitItem) {
+		} else if(src == exitItem) {
 			frame.dispose();
+		} else if(src instanceof JCheckBoxMenuItem) {
+			final FloatingWidgetBase w = floatingWidgets.get(src);
+			if(null != w) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						w.setVisible(((JCheckBoxMenuItem)src).isSelected());
+					}
+				});
+			}
 		} else {
 			//??
 		}

@@ -35,7 +35,7 @@ import prophet.util.Language;
 import prophet.util.Logger;
 
 @SuppressWarnings("serial")
-public class TownsWidget extends WidgetBase implements IWorldListener, ListSelectionListener, MouseListener, ActionListener {
+public class TownsWidget extends ToolBarWidgetBase implements IWorldListener, ListSelectionListener, MouseListener, ActionListener {
 
 	private final static Logger logger = Logger.getLogger(TownsWidget.class);
 	private final static String WTITLE = "Towns";

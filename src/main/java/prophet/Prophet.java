@@ -19,7 +19,6 @@ import prophet.model.SimpleSetting;
 import prophet.serializer.ISerializer;
 import prophet.serializer.XMLSettingSerializer;
 import prophet.util.Configuration;
-import prophet.util.Language;
 import prophet.util.Logger;
 import prophet.util.Resources;
 

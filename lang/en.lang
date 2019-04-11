@@ -1,19 +1,20 @@
 #English en - v.0.3
-#Fri Apr 05 22:42:20 CEST 2019
-Down=Down
-Configuration=Configuration
-Position=Position
-Reset=Reset
-Grid=Grid
-Open\ Setting...=Open Setting...
-Save\ Setting...=Save Setting...
-Options...=Options...
-Up=Up
-Reset\ entries\ to\ their\ original\ value=Reset entries to their original value
-Remove=Remove
+#Thu Apr 11 12:15:36 CEST 2019
+Save=Save
 Quit=Quit
 Remove\ the\ currently\ selected\ entry=Remove the currently selected entry
+Options...=Options...
+Reset=Reset
 Apply\ and\ save\ the\ configuration\ to\ file=Apply and save the configuration to file
-Discard\ changes\ and\ exit=Discard changes and exit
+Grid=Grid
+Configuration=Configuration
+Save\ Setting...=Save Setting...
+Up=Up
+Show\ Widget=Show Widget
+Open\ Setting...=Open Setting...
 Cancel=Cancel
-Save=Save
+Reset\ entries\ to\ their\ original\ value=Reset entries to their original value
+Down=Down
+Discard\ changes\ and\ exit=Discard changes and exit
+Remove=Remove
+Position=Position

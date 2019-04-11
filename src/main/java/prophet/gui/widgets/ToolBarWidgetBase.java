@@ -5,20 +5,22 @@ import javax.swing.JToolBar;
 import prophet.gui.IWidget;
 
 @SuppressWarnings("serial")
-public abstract class WidgetBase extends JToolBar implements IWidget {
+public abstract class ToolBarWidgetBase extends JToolBar implements IWidget {
 
 	private boolean enabled;
 	
-	protected WidgetBase(final String title) {
+	protected ToolBarWidgetBase(final String title) {
 		super(title);
 		setFloatable(true);
 		enabled = true;
 	}
 	
+	@Override
 	public void setEnabled(final boolean enabled) {
 		this.enabled = enabled;
 	}
 	
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}

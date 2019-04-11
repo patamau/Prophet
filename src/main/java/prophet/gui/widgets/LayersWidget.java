@@ -37,7 +37,7 @@ import prophet.util.Logger;
  *
  */
 @SuppressWarnings("serial")
-public class LayersWidget extends WidgetBase implements IRendererListener, ListSelectionListener, MouseListener, ActionListener {
+public class LayersWidget extends ToolBarWidgetBase implements IRendererListener, ListSelectionListener, MouseListener, ActionListener {
 
 	private final static Logger logger = Logger.getLogger(LayersWidget.class);
 	

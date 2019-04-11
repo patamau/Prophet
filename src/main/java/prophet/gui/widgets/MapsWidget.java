@@ -38,7 +38,7 @@ import prophet.util.Logger;
  *
  */
 @SuppressWarnings("serial")
-public class MapsWidget extends WidgetBase implements IWorldListener, ListSelectionListener, MouseListener, ActionListener {
+public class MapsWidget extends ToolBarWidgetBase implements IWorldListener, ListSelectionListener, MouseListener, ActionListener {
 
 	private final static Logger logger = Logger.getLogger(MapsWidget.class);
 	
