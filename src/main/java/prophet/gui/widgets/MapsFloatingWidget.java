@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -26,10 +27,13 @@ import javax.swing.event.ListSelectionListener;
 
 import prophet.gui.KeyValueTableModel;
 import prophet.model.IBorder;
+import prophet.model.IBorderSelectionManager;
 import prophet.model.IMap;
+import prophet.model.IMapSelectionManager;
 import prophet.model.ISetting;
 import prophet.model.ITown;
 import prophet.model.IWorldListener;
+import prophet.model.SimpleMap;
 import prophet.util.Language;
 import prophet.util.Logger;
 
@@ -52,10 +56,13 @@ public class MapsFloatingWidget extends FloatingWidgetBase implements IWorldList
 	private final JTable mapTable;
 	private final JPopupMenu contextMenu;
 	private final JMenuItem removeMapItem;
+	private final JButton addMapButton;
+	private final IMapSelectionManager selectionManager;
 	
-	public MapsFloatingWidget(final ISetting setting, final Frame parent) {
+	public MapsFloatingWidget(final ISetting setting, final IMapSelectionManager selectionManager, final Frame parent) {
 		super(WTITLE, parent);
 		this.setting = setting;
+		this.selectionManager = selectionManager;
 		mapsListModel = new DefaultListModel<IMap>();
 		mapTableModel = new KeyValueTableModel();
 		
@@ -63,8 +70,17 @@ public class MapsFloatingWidget extends FloatingWidgetBase implements IWorldList
 		GridBagConstraints gc = new GridBagConstraints();
 		gc.gridx = gc.gridy = 0;
 		gc.weightx = 1.0;
-		gc.weighty = 0.5;
 		gc.fill = 1;
+		gc.weighty = 0.0;
+		JPanel buttonsPanel = new JPanel();
+		addMapButton = new JButton("+");
+		addMapButton.addActionListener(this);
+		addMapButton.setToolTipText("Adds a new map");
+		buttonsPanel.add(addMapButton);
+		buttonsPanel.add(new JButton("-"));
+		this.add(buttonsPanel, gc);
+		++gc.gridy;
+		gc.weighty = 0.5;
 		mapsList = new JList<IMap>(mapsListModel);
 		mapsList.addListSelectionListener(this);
 		mapsList.addMouseListener(this);
@@ -124,29 +140,6 @@ public class MapsFloatingWidget extends FloatingWidgetBase implements IWorldList
 		mapsListModel.removeAllElements();
 	}
 
-	@Override
-	public void onTownAdded(ITown town) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void onTownChanged(ITown map) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onTownRemoved(ITown town) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onTownsCleared() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
@@ -159,6 +152,7 @@ public class MapsFloatingWidget extends FloatingWidgetBase implements IWorldList
 				mapTableModel.setObject(map);
 				mapTable.invalidate();
 				mapTable.repaint();
+				selectionManager.onMapSelected(map);
 			}
 		}
 	}
@@ -206,7 +200,37 @@ public class MapsFloatingWidget extends FloatingWidgetBase implements IWorldList
 		if(src == removeMapItem) {
 			mapTableModel.setObject(null);
 			setting.getWorld().removeMap(mapsList.getSelectedValue());
+		} else if (src == addMapButton) {
+			IMap map = new SimpleMap("Unknown map", setting.getWorld());
+			setting.getWorld().addMap(map);
+			mapsList.setSelectedValue(map, true);
+			mapTableModel.setObject(map);
+			selectionManager.onMapSelected(map);
 		}
+	}
+	
+	@Override
+	public void onTownAdded(ITown town) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void onTownChanged(ITown map) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTownRemoved(ITown town) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTownsCleared() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

@@ -31,6 +31,8 @@ import prophet.gui.ILayer;
 import prophet.gui.IRenderer;
 import prophet.model.IBorder;
 import prophet.model.IBorderSelectionManager;
+import prophet.model.IMap;
+import prophet.model.IMapSelectionManager;
 import prophet.model.ITown;
 import prophet.model.ITownSelectionManager;
 import prophet.model.IWorld;
@@ -49,7 +51,7 @@ import prophet.util.Logger;
 @SuppressWarnings("serial")
 public class WorldRendererComponent extends JComponent implements IRenderer,
 	MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener, ActionListener, 
-	IBorderSelectionManager, ITownSelectionManager {
+	IBorderSelectionManager, ITownSelectionManager, IMapSelectionManager {
 	
 	private static final Logger logger = Logger.getLogger(WorldRendererComponent.class);
 	
@@ -68,6 +70,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	
 	private ITown selectedTown;
 	private IBorder selectedBorder;
+	private IMap selectedMap;
 
 	private final JPopupMenu contextMenu;
 	
@@ -405,7 +408,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 			world.addBorder(border);
 			this.repaint();
 		} else if(newMapItem == src) {
-			final SimpleMap map = new SimpleMap();
+			final SimpleMap map = new SimpleMap("Unknown map", world);
 			map.setLongitude(world.toLongitude(getWorldX(mouseContextPos.x)));
 			map.setLatitude(world.toLatitude(-getWorldY(mouseContextPos.y)));
 			world.addMap(map);
@@ -448,6 +451,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		if(selectedTown == town) return;
 		selectedTown = town;
 		selectedBorder = null;
+		selectedMap = null;
 		this.repaint();
 	}
 	
@@ -461,6 +465,7 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 		if(selectedBorder == border) return;
 		selectedBorder = border;
 		selectedTown = null;
+		selectedMap = null;
 		this.repaint();
 	}
 	
@@ -472,8 +477,22 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 	@Override
 	public boolean isSelected(Object object) {
 		if (null == object) return false;
-		return
+		return  object == selectedMap  ||
 				object == selectedTown ||
 				object == selectedBorder;
+	}
+
+	@Override
+	public void onMapSelected(IMap map) {
+		if(selectedMap == map) return;
+		selectedMap = map;
+		selectedBorder = null;
+		selectedTown = null;
+		this.repaint();
+	}
+
+	@Override
+	public IMap getSelectedMap() {
+		return selectedMap;
 	}
 }

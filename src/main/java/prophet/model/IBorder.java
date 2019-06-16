@@ -1,5 +1,6 @@
 package prophet.model;
 
+import prophet.geom.IPolygon;
 import prophet.geom.Point2D;
 
 public interface IBorder extends IPolygon, IObservable {

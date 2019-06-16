@@ -54,7 +54,7 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 		renderer = new WorldRendererComponent(setting.getWorld());
 		townsLayer = new IconsLayer("Towns", renderer);
 		bordersLayer = new PolygonsLayer("Borders", renderer);
-		gridLayer = new GridLayer(renderer);
+		gridLayer = new GridLayer(renderer, setting.getWorld());
 		setting.getWorld().addWorldListener(this);
 		serializer = new XMLSettingSerializer();
 	}
@@ -83,8 +83,7 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	public void onMapAdded(final IMap map) {
 		if(mapLayers.containsKey(map)) return;
 		logger.info("Map added: ",map.getPicturePath());
-		final Point2D offset = setting.getWorld().toCartesian(new Point2D(map.getLongitude(), map.getLatitude()));
-		final PictureLayer layer = new PictureLayer(map.getPicturePath(), renderer, map.getPicture(), map.getScale(), offset);
+		final PictureLayer layer = new PictureLayer(map, renderer);
 		mapLayers.put(map, layer);
 		renderer.addLayer(layer);
 	}
@@ -94,9 +93,6 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 		logger.debug("Map changed");
 		final PictureLayer layer = mapLayers.get(map);
 		if(null != layer) {
-			final Point2D offset = setting.getWorld().toCartesian(new Point2D(map.getLongitude(), map.getLatitude()));
-			layer.set(map.getPicture(), offset, map.getScale());
-			layer.setName(map.getPicturePath());
 			renderer.repaint();
 		}
 	}

@@ -33,7 +33,7 @@ class SerializerTest {
 		final ITown town2 = new SimpleTown();
 		town2.setName("another awesome town");
 		setting.getWorld().addTown(town2);
-		final IMap map = new SimpleMap();
+		final IMap map = new SimpleMap("map", setting.getWorld());
 		map.setPicturePath("maps/earth.jpg");
 		setting.getWorld().addMap(map);
 		final ISerializer<ISetting> serializer = new XMLSettingSerializer();

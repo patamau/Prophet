@@ -6,48 +6,40 @@ import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-import prophet.geom.Point2D;
 import prophet.gui.IRenderer;
+import prophet.model.IPicture;
 
 public class PictureLayer extends LayerBase {
 	
 	public static final int CROSS_SIZ = 10; //pixels
 	
 	private final IRenderer renderer;
-	private BufferedImage image;
-	private double scale;
-	private final Point imageOffset;
+	private final IPicture picture;
+	private transient final Point imageOffset;
 	
-	
-	public PictureLayer(final String name, final IRenderer renderer, final BufferedImage image, final double scale, final Point2D offset)
+	public PictureLayer(final IPicture picture, final IRenderer renderer)
 	{
-		super(name);
-		this.image = image;
+		super(picture.getName());
+		this.picture = picture;
 		this.renderer = renderer;
-		this.scale = scale;
 		this.imageOffset = new Point();
-		updateOffset(offset);
 	}
 	
-	public void set(final BufferedImage image, final Point2D offset, final double scale) {
-		this.image = image;
-		this.scale = scale;
-		updateOffset(offset);
-	}
-	
-	private void updateOffset(final Point2D offset) {
-		if(null == image) return;
-		final int x = (int)Math.round(offset.getX() - image.getWidth()*scale/2);
-		final int y = (int)Math.round(offset.getY() + image.getHeight()*scale/2);
-		imageOffset.setLocation(x, y) ;
+	@Override
+	public String getName() {
+		return picture.getName();
 	}
 
 	@Override
 	public void draw(final Graphics2D g) {
-		if(null == image) return;
+		if(null == picture.getImage()) return;
+		final BufferedImage image = picture.getImage();
 		final AffineTransform at = new AffineTransform();
 		final Point offset = renderer.getOffset();
-		final double zoom = renderer.getZoom() * scale;
+		final int x = (int)Math.round(picture.getX()-image.getWidth()*picture.getScale()/2);
+		final int y = (int)Math.round(picture.getY()+image.getHeight()*picture.getScale()/2);
+		imageOffset.setLocation(x, y) ;
+		final double zoom = renderer.getZoom() * picture.getScale();
 		at.translate(offset.getX()+(imageOffset.x*renderer.getZoom()), offset.getY()-(imageOffset.y*renderer.getZoom()));
 		at.scale(zoom, zoom);
         AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);

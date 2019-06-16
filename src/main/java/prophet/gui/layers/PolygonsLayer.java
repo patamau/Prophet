@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import prophet.geom.IPolygon;
 import prophet.geom.Point2D;
 import prophet.gui.IRenderer;
-import prophet.model.IPolygon;
 
 public class PolygonsLayer extends LayerBase {
 
