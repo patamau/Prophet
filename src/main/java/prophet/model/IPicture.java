@@ -2,19 +2,18 @@ package prophet.model;
 
 import java.awt.image.BufferedImage;
 
-public interface IPicture {
+public interface IPicture extends IObservable {
 	
 	public String getName();
 
 	public BufferedImage getImage();
 	public void setPicturePath(final String picturePath);
 	public String getPicturePath();
-	
-	public double getX();
-	public double getY();
-	
-	public void setX(final double x);
-	public void setY(final double y);
+
+	public double getLatitude();
+	public double getLongitude();
+	public void setLatitude(final double latitude);
+	public void setLongitude(final double longitude);
 	
 	/**
 	 * Scale in metres per pixel

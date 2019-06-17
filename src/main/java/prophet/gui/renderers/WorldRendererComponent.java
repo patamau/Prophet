@@ -408,7 +408,8 @@ public class WorldRendererComponent extends JComponent implements IRenderer,
 			world.addBorder(border);
 			this.repaint();
 		} else if(newMapItem == src) {
-			final SimpleMap map = new SimpleMap("Unknown map", world);
+			final SimpleMap map = new SimpleMap();
+			map.setWorld(world);
 			map.setLongitude(world.toLongitude(getWorldX(mouseContextPos.x)));
 			map.setLatitude(world.toLatitude(-getWorldY(mouseContextPos.y)));
 			world.addMap(map);

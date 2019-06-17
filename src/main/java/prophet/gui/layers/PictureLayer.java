@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 
 import prophet.gui.IRenderer;
 import prophet.model.IPicture;
+import prophet.model.IWorld;
 
 public class PictureLayer extends LayerBase {
 	
@@ -16,10 +17,12 @@ public class PictureLayer extends LayerBase {
 	private final IRenderer renderer;
 	private final IPicture picture;
 	private transient final Point imageOffset;
+	private transient final IWorld world;
 	
-	public PictureLayer(final IPicture picture, final IRenderer renderer)
+	public PictureLayer(final IPicture picture, final IWorld world, final IRenderer renderer)
 	{
 		super(picture.getName());
+		this.world = world;
 		this.picture = picture;
 		this.renderer = renderer;
 		this.imageOffset = new Point();
@@ -36,8 +39,8 @@ public class PictureLayer extends LayerBase {
 		final BufferedImage image = picture.getImage();
 		final AffineTransform at = new AffineTransform();
 		final Point offset = renderer.getOffset();
-		final int x = (int)Math.round(picture.getX()-image.getWidth()*picture.getScale()/2);
-		final int y = (int)Math.round(picture.getY()+image.getHeight()*picture.getScale()/2);
+		final int x = (int)Math.round(world.fromLongitude(picture.getLongitude())-image.getWidth()*picture.getScale()/2);
+		final int y = (int)Math.round(world.fromLatitude(picture.getLatitude())+image.getHeight()*picture.getScale()/2);
 		imageOffset.setLocation(x, y) ;
 		final double zoom = renderer.getZoom() * picture.getScale();
 		at.translate(offset.getX()+(imageOffset.x*renderer.getZoom()), offset.getY()-(imageOffset.y*renderer.getZoom()));

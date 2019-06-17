@@ -83,7 +83,7 @@ public class Prophet implements IWorldListener, UncaughtExceptionHandler {
 	public void onMapAdded(final IMap map) {
 		if(mapLayers.containsKey(map)) return;
 		logger.info("Map added: ",map.getPicturePath());
-		final PictureLayer layer = new PictureLayer(map, renderer);
+		final PictureLayer layer = new PictureLayer(map, setting.getWorld(), renderer);
 		mapLayers.put(map, layer);
 		renderer.addLayer(layer);
 	}

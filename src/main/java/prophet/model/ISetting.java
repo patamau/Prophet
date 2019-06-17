@@ -15,6 +15,11 @@ public interface ISetting {
 	 */
 	public void reset();
 	
+	/**
+	 * Initialise this setting to a coherent state
+	 */
+	public void init();
+	
 	public IWorld getWorld();
 	//calendar
 	//religion

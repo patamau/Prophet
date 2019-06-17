@@ -170,6 +170,7 @@ public class ProphetGUI implements ActionListener {
 				final ISetting setting = prophet.getSetting();
 				setting.reset();
 				prophet.getSettingSerializer().parse(source, prophet.getSetting(), null);
+				setting.init();
 			} catch (Throwable e) {
 				JOptionPane.showMessageDialog(frame, "Error while loading file: "+e.getMessage(), "Load error", JOptionPane.ERROR_MESSAGE);
 			}

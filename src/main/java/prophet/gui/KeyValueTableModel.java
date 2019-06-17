@@ -54,12 +54,11 @@ public class KeyValueTableModel extends DefaultTableModel {
 		try {
 			ClassUtils.setFieldValue(object, key, (String)v);
 			super.setValueAt(v, r, c);
-			if(null != object) {
-				object.notifyObservers();
-			}
+			object.notifyObservers();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			super.setValueAt(getValueAt(r, 1), r, 1);
+			e.printStackTrace();
 		}
 	}
 }

@@ -8,23 +8,33 @@ import prophet.util.Resources;
 public class SimpleMap extends Observable implements IMap {
 	
 	private double latitude, longitude;
-	private double x, y;
 	private double scale; //this is meters per pixels
 	private String picturePath;
 	private String name;
 	
 	private transient BufferedImage picture;
 	private transient double width, height;
-	private transient final IWorld world;
+	private transient IWorld world;
 	
-	public SimpleMap(final String name, final IWorld world) {
-		this.name = name;
-		this.world = world;
+	public SimpleMap() {
+		this.name = "Unknown Map";
+		this.world = null;
 		latitude = longitude = 0d;
-		x = y = 0d;
 		scale = 1d;
 		picturePath = null;
 		picture = null;
+	}
+	
+	public void setWorld(final IWorld world) {
+		if(this.world == world) return;
+		this.world = world;
+		setChanged();
+	}
+	
+	public void setName(final String name) {
+		if(this.name == name) return;
+		this.name = name;
+		setChanged();
 	}
 	
 	private void updateSize() {
@@ -69,7 +79,6 @@ public class SimpleMap extends Observable implements IMap {
 	public void setLatitude(final double latitude) {
 		if(this.latitude==latitude) return;
 		this.latitude = latitude;
-		this.y = world.fromLatitude(latitude);
 		setChanged();
 	}
 
@@ -77,7 +86,6 @@ public class SimpleMap extends Observable implements IMap {
 	public void setLongitude(final double longitude) {
 		if(this.longitude==longitude) return;
 		this.longitude = longitude;
-		this.x = world.fromLongitude(longitude);
 		setChanged();
 	}
 
@@ -107,32 +115,6 @@ public class SimpleMap extends Observable implements IMap {
 	@Override
 	public String toString() {
 		return  this.name;
-	}
-
-	@Override
-	public double getX() {
-		return x;
-	}
-
-	@Override
-	public double getY() {
-		return y;
-	}
-
-	@Override
-	public void setX(double x) {
-		if(this.x == x) return;
-		longitude = world.toLongitude(x);
-		this.x = x;
-		setChanged();
-	}
-
-	@Override
-	public void setY(double y) {
-		if(this.y == y) return;
-		latitude = world.toLatitude(y);
-		this.y = y;
-		setChanged();
 	}
 
 	@Override

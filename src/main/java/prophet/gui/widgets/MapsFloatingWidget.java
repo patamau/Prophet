@@ -201,7 +201,7 @@ public class MapsFloatingWidget extends FloatingWidgetBase implements IWorldList
 			mapTableModel.setObject(null);
 			setting.getWorld().removeMap(mapsList.getSelectedValue());
 		} else if (src == addMapButton) {
-			IMap map = new SimpleMap("Unknown map", setting.getWorld());
+			IMap map = new SimpleMap();
 			setting.getWorld().addMap(map);
 			mapsList.setSelectedValue(map, true);
 			mapTableModel.setObject(map);
